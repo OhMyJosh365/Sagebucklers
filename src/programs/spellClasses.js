@@ -305,6 +305,7 @@ class ExplosionObject{
     pixelSpeed = 12;
     activeFrames = 3;
     firstFrameFlag = true;
+    DmgedCounter = 0;
     
 
     constructor(team, positionX, positionY, destX, destY){
@@ -316,7 +317,9 @@ class ExplosionObject{
         this.destY = destY;
     }
 
-    async onFrame(ctx, objectArray){ 
+    async onFrame(ctx, objectArray){
+        if(this.DmgedCounter > 0) this.DmgedCounter = -1;
+
         if(this.firstFrameFlag){
             //Get a target to hit both
             var targets = [];
@@ -346,7 +349,7 @@ class ExplosionObject{
 
                 var distance = Math.sqrt((target.positionX - this.destX) ** 2 + (target.positionY - this.destY) ** 2);
                 var angle = Math.atan(tempSlope);
-                var newDistance = distance - 15;
+                var newDistance = distance - 25;
                 this.destX = target.positionX - newDistance * Math.cos(angle);
                 this.destY = target.positionY - newDistance * Math.sin(angle);
 
@@ -366,10 +369,10 @@ class ExplosionObject{
                 (this.team == "left" && this.positionX > this.destX) ||
                 (this.team == "right" && this.positionY > this.destY)
             ){
-                this.positionX -= 15;
-                this.positionY -= 15;
-                this.sizeX = 45;
-                this.sizeY = 45;
+                this.positionX -= 30;
+                this.positionY -= 30;
+                this.sizeX = 75;
+                this.sizeY = 75;
                 this.slope = 0;
                 this.offset = 0;
             }
@@ -384,18 +387,14 @@ class ExplosionObject{
     }
 
     async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
-        if(this.slope != 0 && this.offset != 0){
+        if(this.slope == 0 && this.offset == 0 && this.DmgedCounter >= 0){
             if (this.positionX < otherObject.positionX + otherObject.sizeX &&
                 this.positionX + this.sizeX > otherObject.positionX &&
                 this.positionY < otherObject.positionY + otherObject.sizeY &&
                 this.positionY + this.sizeY > otherObject.positionY) {
                     if(otherObject.hp && otherObject.team != this.team){
-                        this.positionX = otherObject.positionX - 15;
-                        this.positionY = otherObject.positionY - 15;
-                        this.sizeX = 45;
-                        this.sizeY = 45;
-                        this.slope = 0;
-                        this.offset = 0;
+                        this.DmgedCounter++;
+                        otherObject.hp -= 6;
                     }
                 }
         }

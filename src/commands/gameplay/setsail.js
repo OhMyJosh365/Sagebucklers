@@ -10,7 +10,6 @@ module.exports = {
         .setDescription('Set sail to fight others for Treasure!'),
     async execute(interaction, client){
 
-        console.log("EXPLOSION IS GETTING THERE, BUT NEEDS TO BE FINISHED/FIX RADIUS");
         var userProfile = await UserProfile.findOne({userId: interaction.user.id});
 
         var gameData = {
