@@ -401,6 +401,56 @@ class ExplosionObject{
     }
 };
 
+class ScorchObject{
+    className = "ScorchObject";
+    iconName = "scorch";
+    team = "left";
+    active = true;
+    maxCharge = 20;
+    positionX = 0;
+    positionY = 0;
+    destX = 0;
+    destY = 0;
+    slope = 0;
+    offset = 0;
+    sizeX = 20;
+    sizeY = 10;
+    pixelSpeed = 20;
+    
+
+    constructor(team, positionX, positionY, destX, destY){
+        this.active = true;
+        this.team = team;
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.destX = destX;
+        this.destY = destY;
+
+        this.slope = (destY - positionY) / (destX - positionX);
+        this.offset = -((this.slope * positionX) - positionY);
+    }
+
+    async onFrame(ctx, objectArray){ 
+        await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
+        this.positionX += (this.team == "left") ? this.pixelSpeed : -this.pixelSpeed;
+        this.positionY = (this.slope * this.positionX) + this.offset;
+    }
+
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
+        if (this.positionX < otherObject.positionX + otherObject.sizeX &&
+            this.positionX + this.sizeX > otherObject.positionX &&
+            this.positionY < otherObject.positionY + otherObject.sizeY &&
+            this.positionY + this.sizeY > otherObject.positionY) {
+                if(otherObject.hp && otherObject.team != this.team){
+                    otherObject.maxHp -= 7;
+                    if(otherObject.maxHp < otherObject.hp){
+                        otherObject.hp = otherObject.maxHp;
+                    }
+                }
+            }
+    }
+};
+
 class HearthObject{
     className = "HearthObject";
     iconName = "hearth";
@@ -516,8 +566,62 @@ class ZapObject{
 };
 
 
+//Frost Magic
+class SnowballObject{
+    className = "SnowballObject";
+    iconName = "snowball";
+    team = "left";
+    active = true;
+    maxCharge = 8;
+    positionX = 0;
+    positionY = 0;
+    destX = 0;
+    destY = 0;
+    slope = 0;
+    offset = 0;
+    sizeX = 10;
+    sizeY = 10;
+    pixelSpeed = 6;
+    
+
+    constructor(team, positionX, positionY, destX, destY){
+        this.active = true;
+        this.team = team;
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.destX = destX;
+        this.destY = destY;
+
+        this.slope = (destY - positionY) / (destX - positionX);
+        this.offset = -((this.slope * positionX) - positionY);
+    }
+
+    async onFrame(ctx, objectArray){ 
+        await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
+        this.positionX += (this.team == "left") ? this.pixelSpeed : -this.pixelSpeed;
+        this.positionY = (this.slope * this.positionX) + this.offset;
+    }
+
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
+        if (this.positionX < otherObject.positionX + otherObject.sizeX &&
+            this.positionX + this.sizeX > otherObject.positionX &&
+            this.positionY < otherObject.positionY + otherObject.sizeY &&
+            this.positionY + this.sizeY > otherObject.positionY) {
+                if(otherObject.hp && otherObject.team != this.team){
+                    this.active = false;
+                    otherObject.charge -= 5;
+                    if(otherObject.charge < 0){
+                        otherObject.charge = 0;
+                    }
+                }
+            }
+    }
+};
+
+
 module.exports = {
     WaitObject, PrepareObject, RestObject, SparkObject, CounterObject,
-    FireballObject, BurnObject, ExplosionObject, HearthObject,
-    ZapObject
+    FireballObject, BurnObject, ExplosionObject, ScorchObject, HearthObject,
+    ZapObject,
+    SnowballObject
 };
