@@ -1,9 +1,7 @@
 class DiceObject{
     
     spellFaces = [
-        "Hearth",
-        "Hearth",
-        "Snowball"
+        "Bolt"
     ];
 
     possibleRolls = [];

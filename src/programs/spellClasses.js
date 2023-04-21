@@ -570,7 +570,7 @@ class BoltObject{
     iconName = "bolt";
     team = "left";
     active = true;
-    maxCharge = 10;
+    maxCharge = 15;
     positionX = 0;
     positionY = 0;
     destX = 0;
@@ -596,8 +596,6 @@ class BoltObject{
 
     async onFrame(ctx, objectArray){ 
         await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
-        this.slope += 20 * Math.sin(2 * Math.PI * .02 * .05);
-        this.offset = amplitude * Math.cos(2 * Math.PI * .02 * .05);
         this.positionX += (this.team == "left") ? this.pixelSpeed : -this.pixelSpeed;
         this.positionY = (this.slope * this.positionX) + this.offset;
     }
@@ -609,7 +607,7 @@ class BoltObject{
             this.positionY + this.sizeY > otherObject.positionY) {
                 if(otherObject.hp && otherObject.team != this.team && otherObject.className == "CannonObject"){
                     this.active = false;
-                    otherObject.hp -= 4;
+                    otherObject.hp -= 6;
                 }
             }
     }
