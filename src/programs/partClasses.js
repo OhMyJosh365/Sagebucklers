@@ -35,6 +35,7 @@ class CannonObject{
     sizeY = 15;
     charge = 0;
     maxCharge = -1;
+    chargeRate = 1;
     currentSpell = null;
     
 
@@ -70,7 +71,7 @@ class CannonObject{
                     this.maxCharge = new spellClasses[`${this.currentSpell}Object`]().maxCharge;
                 }
 
-                this.charge++;
+                this.charge += this.chargeRate;
                 if(this.charge >= this.maxCharge){
                     this.launch(objectArray);
                     this.currentSpell = null;

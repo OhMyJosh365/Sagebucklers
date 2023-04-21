@@ -699,6 +699,17 @@ class ShockObject{
             this.activeFrames--;
             if(this.activeFrames <= 0){
                 this.active = false;
+
+                for(var i = 0; i < objectArray.length && !this.DmgedFlag; i++){
+                    if(this.positionX < objectArray[i].positionX + objectArray[i].sizeX &&
+                        this.positionX + this.sizeX > objectArray[i].positionX &&
+                        this.positionY < objectArray[i].positionY + objectArray[i].sizeY &&
+                        this.positionY + this.sizeY > objectArray[i].positionY &&
+                        objectArray[i].chargeRate <= 0){
+                            
+                            objectArray[i].chargeRate = 1;
+                    }
+                }
             }
         }
     }
@@ -711,7 +722,7 @@ class ShockObject{
                 if(otherObject.hp && otherObject.team != this.team){
                     this.slope = 0;
                     this.offset = 0;
-                    otherObject.charge--;
+                    otherObject.chargeRate = 0;
                 }
             }
     }
@@ -774,6 +785,6 @@ class SnowballObject{
 module.exports = {
     WaitObject, PrepareObject, RestObject, SparkObject, CounterObject,
     FireballObject, BurnObject, ExplosionObject, ScorchObject, HearthObject,
-    ZapObject, BoltObject, LightningObject,
+    ZapObject, BoltObject, LightningObject, ShockObject,
     SnowballObject
 };
