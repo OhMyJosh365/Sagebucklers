@@ -18,8 +18,8 @@ module.exports = {
                 "Ship": [
                     ["CannonObject", new mateClasses.MateObject()],
                     [null, null],
-                    [null, null],
-                    [null, null],
+                    ["CannonObject", new mateClasses.MateObject()],
+                    ["CannonObject", new mateClasses.MateObject()],
                     [null, null],
                     [null, null],
                     [null, null]
@@ -33,7 +33,8 @@ module.exports = {
                     new mateClasses.MateObject(),
                     new mateClasses.MateObject(),
                     new mateClasses.MateObject()
-                ]
+                ],
+                "ShipConditions" : []
             },
             "Player2" : {
                 "userId": null,
@@ -45,7 +46,18 @@ module.exports = {
                     [null, null],
                     ["CannonObject", new mateClasses.MateObject()],
                     [null, null]
-                ]
+                ],
+                "PartInventory": [
+                    "CannonObject",
+                    "CannonObject",
+                    "CannonObject"
+                ],
+                "MateInventory": [
+                    new mateClasses.MateObject(),
+                    new mateClasses.MateObject(),
+                    new mateClasses.MateObject()
+                ],
+                "ShipConditions" : []
             }
         };
 

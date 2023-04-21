@@ -1,7 +1,7 @@
 class DiceObject{
     
     spellFaces = [
-        "Lightning"
+        "Shock"
     ];
 
     possibleRolls = [];

@@ -23,6 +23,8 @@ async function startDuel(interaction, client, gameId){
         currentGame.gameData[0].activeDuels = {};
     }
     currentGame.gameData[0].activeDuels[matchName] = {};
+    currentGame.gameData[0].activeDuels[matchName].LeftShip = currentGame.gameData[0][players[0]];
+    currentGame.gameData[0].activeDuels[matchName].RightShip = currentGame.gameData[0][players[1]];
     currentGame.gameData[0].activeDuels[matchName].objectArray = [];
     
     for(var i = 0; i < 2; i++){
