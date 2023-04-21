@@ -613,6 +613,51 @@ class BoltObject{
     }
 };
 
+class LightningObject{
+    className = "LightningObject";
+    iconName = "lightning";
+    team = "left";
+    active = true;
+    maxCharge = 25;
+    positionX = 0;
+    positionY = 0;
+    destX = 0;
+    destY = 0;
+    sizeX = 10;
+    sizeY = 15;
+    activeFrames = 5;
+    DmgedFlag = false;
+    
+
+    constructor(team, positionX, positionY, destX, destY){
+        this.active = true;
+        this.team = team;
+        this.positionX = destX;
+        this.positionY = destY;
+    }
+
+    async onFrame(ctx, objectArray){ 
+        await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX + (this.sizeX/2), this.positionY - (this.sizeY/2), this.sizeX, this.sizeY);
+        
+        if(!this.DmgedFlag){
+            for(var i = 0; i < objectArray.length && !this.DmgedFlag; i++){
+                if(this.positionX == objectArray[i].positionX &&
+                    this.positionY == objectArray[i].positionY && objectArray[i].hp){
+                        objectArray[i].hp -= 8;
+                        this.DmgedFlag = true;
+                }
+            }
+        }
+        
+        this.activeFrames--;
+        if(this.activeFrames <= 0){
+            this.active = false;
+        }
+    }
+
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){}
+};
+
 
 //Frost Magic
 class SnowballObject{
@@ -670,6 +715,6 @@ class SnowballObject{
 module.exports = {
     WaitObject, PrepareObject, RestObject, SparkObject, CounterObject,
     FireballObject, BurnObject, ExplosionObject, ScorchObject, HearthObject,
-    ZapObject, BoltObject,
+    ZapObject, BoltObject, LightningObject,
     SnowballObject
 };
