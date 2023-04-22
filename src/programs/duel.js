@@ -91,8 +91,10 @@ async function startDuel(interaction, client, gameId){
                 objectArray[j].positionY <= 0 ||
                 objectArray[j].positionX >= sizeH ||
                 objectArray[j].positionX >= sizeW){
-                objectArray.splice(j, 1);
-                j--;
+                if(!(objectArray[j].className == "ArmageddonObject" && objectArray[j].active == false)){
+                    objectArray.splice(j, 1);
+                    j--;
+                }    
             }
         }
 

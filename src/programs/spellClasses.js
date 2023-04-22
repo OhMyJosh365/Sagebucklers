@@ -955,6 +955,8 @@ class ArmageddonObject{
 
     async onFrame(ctx, objectArray){ 
         await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
+        this.positionX -= 5;
+        this.positionY -= 5;
         this.sizeX += 10;
         this.sizeY += 10;
     }
