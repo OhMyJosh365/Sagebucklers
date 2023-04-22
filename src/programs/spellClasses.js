@@ -933,6 +933,44 @@ class MagicMissileObject{
     }
 };
 
+class ArmageddonObject{
+    className = "ArmageddonObject";
+    iconName = "armageddon";
+    school = "Pure";
+    team = "left";
+    active = true;
+    maxCharge = 100;
+    positionX = 0;
+    positionY = 0;
+    sizeX = 15;
+    sizeY = 15;
+    
+
+    constructor(team, positionX, positionY, destX, destY){
+        this.active = true;
+        this.team = team;
+        this.positionX = positionX;
+        this.positionY = positionY;
+    }
+
+    async onFrame(ctx, objectArray){ 
+        await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
+        this.sizeX += 10;
+        this.sizeY += 10;
+    }
+
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
+        if (this.positionX < otherObject.positionX + otherObject.sizeX &&
+            this.positionX + this.sizeX > otherObject.positionX &&
+            this.positionY < otherObject.positionY + otherObject.sizeY &&
+            this.positionY + this.sizeY > otherObject.positionY) {
+                if(otherObject.active && otherObject.team != this.team){
+                    otherObject.active = false;
+                }
+            }
+    }
+};
+
 class TrueSmiteObject{
     className = "TrueSmiteObject";
     iconName = "truesmite";
@@ -976,7 +1014,6 @@ class TrueSmiteObject{
             this.positionY + this.sizeY > otherObject.positionY) {
                 if(otherObject.hp && otherObject.team != this.team){
                     this.active = false;
-                    console.log(otherObject.hp / otherObject.maxHp)
                     if(otherObject.hp / otherObject.maxHp < .30){
                         otherObject.hp = 0;
                     }
@@ -994,5 +1031,5 @@ module.exports = {
     FireballObject, BurnObject, ExplosionObject, ScorchObject, HearthObject,
     ZapObject, BoltObject, LightningObject, ShockObject, EnergizeObject,
     SnowballObject, FreezeObject,
-    MagicMissileObject, TrueSmiteObject
+    MagicMissileObject, ArmageddonObject, TrueSmiteObject
 };
