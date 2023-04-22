@@ -976,11 +976,12 @@ class TrueSmiteObject{
             this.positionY + this.sizeY > otherObject.positionY) {
                 if(otherObject.hp && otherObject.team != this.team){
                     this.active = false;
-                    if(otherObject.hp / otherObject.maxHp < .15){
+                    console.log(otherObject.hp / otherObject.maxHp)
+                    if(otherObject.hp / otherObject.maxHp < .30){
                         otherObject.hp = 0;
                     }
                     else{
-                        otherObject.hp -= 5;
+                        otherObject.hp -= 10;
                     }
                 }
             }
