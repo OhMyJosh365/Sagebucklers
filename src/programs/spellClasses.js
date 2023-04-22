@@ -4,6 +4,7 @@ const Canvas = require("canvas");
 //Basic Magic
 class WaitObject{
     className = "WaitObject";
+    school = "Basic";
     maxCharge = 3;
     active = false;
 
@@ -14,6 +15,7 @@ class WaitObject{
 
 class PrepareObject{
     className = "PrepareObject";
+    school = "Basic";
     maxCharge = 8;
     active = true;
     positionX = 0;
@@ -47,6 +49,7 @@ class PrepareObject{
 
 class RestObject{
     className = "RestObject";
+    school = "Basic";
     maxCharge = 8;
     active = true;
     positionX = 0;
@@ -82,6 +85,7 @@ class RestObject{
 class SparkObject{
     className = "SparkObject";
     iconName = "spark";
+    school = "Basic";
     team = "left";
     active = true;
     maxCharge = 20;
@@ -130,6 +134,7 @@ class SparkObject{
 class CounterObject{
     className = "CounterObject";
     iconName = "counter";
+    school = "Basic";
     team = "left";
     active = true;
     maxCharge = 20;
@@ -173,6 +178,7 @@ class CounterObject{
 class FireballObject{
     className = "FireballObject";
     iconName = "fireball";
+    school = "Flame";
     team = "left";
     active = true;
     maxCharge = 15;
@@ -221,6 +227,7 @@ class FireballObject{
 class BurnObject{
     className = "BurnObject";
     iconName = "burn";
+    school = "Flame";
     team = "left";
     active = true;
     maxCharge = 25;
@@ -291,6 +298,7 @@ class BurnObject{
 class ExplosionObject{
     className = "ExplosionObject";
     iconName = "explosion";
+    school = "Flame";
     team = "left";
     active = true;
     maxCharge = 20;
@@ -404,6 +412,7 @@ class ExplosionObject{
 class ScorchObject{
     className = "ScorchObject";
     iconName = "scorch";
+    school = "Flame";
     team = "left";
     active = true;
     maxCharge = 20;
@@ -454,6 +463,7 @@ class ScorchObject{
 class HearthObject{
     className = "HearthObject";
     iconName = "hearth";
+    school = "Flame";
     team = "left";
     active = true;
     maxCharge = 25;
@@ -520,6 +530,7 @@ class HearthObject{
 class ZapObject{
     className = "ZapObject";
     iconName = "zap";
+    school = "Storm";
     team = "left";
     active = true;
     maxCharge = 6;
@@ -532,6 +543,7 @@ class ZapObject{
     sizeX = 10;
     sizeY = 10;
     pixelSpeed = 12;
+    energizeBonus = 0;
 
     
     constructor(team, positionX, positionY, destX, destY){
@@ -559,7 +571,7 @@ class ZapObject{
             this.positionY + this.sizeY > otherObject.positionY) {
                 if(otherObject.hp && otherObject.team != this.team){
                     this.active = false;
-                    otherObject.hp -= 4;
+                    otherObject.hp -= (4 + this.energizeBonus);
                 }
             }
     }
@@ -568,6 +580,7 @@ class ZapObject{
 class BoltObject{
     className = "BoltObject";
     iconName = "bolt";
+    school = "Storm";
     team = "left";
     active = true;
     maxCharge = 15;
@@ -580,6 +593,7 @@ class BoltObject{
     sizeX = 10;
     sizeY = 10;
     pixelSpeed = 7;
+    energizeBonus = 0;
 
     
     constructor(team, positionX, positionY, destX, destY){
@@ -607,7 +621,7 @@ class BoltObject{
             this.positionY + this.sizeY > otherObject.positionY) {
                 if(otherObject.hp && otherObject.team != this.team && otherObject.className == "CannonObject"){
                     this.active = false;
-                    otherObject.hp -= 6;
+                    otherObject.hp -= (6 + this.energizeBonus);
                 }
             }
     }
@@ -616,6 +630,7 @@ class BoltObject{
 class LightningObject{
     className = "LightningObject";
     iconName = "lightning";
+    school = "Storm";
     team = "left";
     active = true;
     maxCharge = 25;
@@ -627,6 +642,7 @@ class LightningObject{
     sizeY = 15;
     activeFrames = 5;
     DmgedFlag = false;
+    energizeBonus = 0;
     
 
     constructor(team, positionX, positionY, destX, destY){
@@ -643,7 +659,7 @@ class LightningObject{
             for(var i = 0; i < objectArray.length && !this.DmgedFlag; i++){
                 if(this.positionX == objectArray[i].positionX &&
                     this.positionY == objectArray[i].positionY && objectArray[i].hp){
-                        objectArray[i].hp -= 8;
+                        objectArray[i].hp -= (8 + this.energizeBonus);
                         this.DmgedFlag = true;
                 }
             }
@@ -661,6 +677,7 @@ class LightningObject{
 class ShockObject{
     className = "ShockObject";
     iconName = "shock";
+    school = "Storm";
     team = "left";
     active = true;
     maxCharge = 25;
@@ -706,7 +723,7 @@ class ShockObject{
                         this.positionY < objectArray[i].positionY + objectArray[i].sizeY &&
                         this.positionY + this.sizeY > objectArray[i].positionY &&
                         objectArray[i].chargeRate <= 0){
-                            
+
                             objectArray[i].chargeRate = 1;
                     }
                 }
@@ -726,6 +743,39 @@ class ShockObject{
                 }
             }
     }
+};
+
+class EnergizeObject{
+    className = "EnergizeObject";
+    school = "Storm";
+    team = "left";
+    active = true;
+    maxCharge = 25;
+    positionX = 0;
+    positionY = 0;
+    
+
+    constructor(team, positionX, positionY, destX, destY){
+        this.active = true;
+        this.team = team;
+        this.positionX = positionX;
+        this.positionY = positionY;
+    }
+
+    async onFrame(ctx, objectArray){
+        for(var i = 0; i < objectArray.length; i++){
+            if(this.positionX < objectArray[i].positionX + objectArray[i].sizeX &&
+                this.positionX + this.sizeX > objectArray[i].positionX &&
+                this.positionY < objectArray[i].positionY + objectArray[i].sizeY &&
+                this.positionY + this.sizeY > objectArray[i].positionY){
+
+                    objectArray[i].energizeBonus++;
+            }
+        }
+        this.active = false;
+    }
+
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){}
 };
 
 
@@ -782,9 +832,60 @@ class SnowballObject{
 };
 
 
+//Pure Magic Magic
+class MagicMissileObject{
+    className = "MagicMissleObject";
+    iconName = "magicmissle";
+    school = "Pure";
+    team = "left";
+    active = true;
+    maxCharge = 20;
+    positionX = 0;
+    positionY = 0;
+    destX = 0;
+    destY = 0;
+    slope = 0;
+    offset = 0;
+    sizeX = 15;
+    sizeY = 15;
+    pixelSpeed = 9;
+    
+
+    constructor(team, positionX, positionY, destX, destY){
+        this.active = true;
+        this.team = team;
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.destX = destX;
+        this.destY = destY;
+
+        this.slope = (destY - positionY) / (destX - positionX);
+        this.offset = -((this.slope * positionX) - positionY);
+    }
+
+    async onFrame(ctx, objectArray){ 
+        await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
+        this.positionX += (this.team == "left") ? this.pixelSpeed : -this.pixelSpeed;
+        this.positionY = (this.slope * this.positionX) + this.offset;
+    }
+
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
+        if (this.positionX < otherObject.positionX + otherObject.sizeX &&
+            this.positionX + this.sizeX > otherObject.positionX &&
+            this.positionY < otherObject.positionY + otherObject.sizeY &&
+            this.positionY + this.sizeY > otherObject.positionY) {
+                if(otherObject.hp && otherObject.team != this.team){
+                    this.active = false;
+                    otherObject.hp -= 20;
+                }
+            }
+    }
+};
+
 module.exports = {
     WaitObject, PrepareObject, RestObject, SparkObject, CounterObject,
     FireballObject, BurnObject, ExplosionObject, ScorchObject, HearthObject,
-    ZapObject, BoltObject, LightningObject, ShockObject,
-    SnowballObject
+    ZapObject, BoltObject, LightningObject, ShockObject, EnergizeObject,
+    SnowballObject,
+    MagicMissileObject
 };

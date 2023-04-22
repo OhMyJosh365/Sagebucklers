@@ -36,6 +36,7 @@ class CannonObject{
     charge = 0;
     maxCharge = -1;
     chargeRate = 1;
+    energizeBonus = 0
     currentSpell = null;
     
 
@@ -106,8 +107,11 @@ class CannonObject{
                         target = targets[i];
                 }
             }
-            
-            await objectArray.push(new spellClasses[`${this.currentSpell}Object`](this.team, this.positionX, this.positionY, target.positionX, target.positionY));
+            var spell = new spellClasses[`${this.currentSpell}Object`](this.team, this.positionX, this.positionY, target.positionX, target.positionY);
+            if(this.energizeBonus > 0 && spell.school == "Storm" && spell.className != "EnergizeObject"){
+                spell.energizeBonus = this.energizeBonus;
+            }
+            await objectArray.push(spell);
         }
     }
 
