@@ -831,6 +831,55 @@ class SnowballObject{
     }
 };
 
+class FreezeObject{
+    className = "FreezeObject";
+    iconName = "freeze";
+    team = "left";
+    active = true;
+    maxCharge = 30;
+    positionX = 0;
+    positionY = 0;
+    destX = 0;
+    destY = 0;
+    slope = 0;
+    offset = 0;
+    sizeX = 10;
+    sizeY = 10;
+    pixelSpeed = 5;
+    
+
+    constructor(team, positionX, positionY, destX, destY){
+        this.active = true;
+        this.team = team;
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.destX = destX;
+        this.destY = destY;
+
+        this.slope = (destY - positionY) / (destX - positionX);
+        this.offset = -((this.slope * positionX) - positionY);
+    }
+
+    async onFrame(ctx, objectArray){ 
+        await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
+        this.positionX += (this.team == "left") ? this.pixelSpeed : -this.pixelSpeed;
+        this.positionY = (this.slope * this.positionX) + this.offset;
+    }
+
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
+        if (this.positionX < otherObject.positionX + otherObject.sizeX &&
+            this.positionX + this.sizeX > otherObject.positionX &&
+            this.positionY < otherObject.positionY + otherObject.sizeY &&
+            this.positionY + this.sizeY > otherObject.positionY) {
+                if(otherObject.hp && otherObject.team != this.team && otherObject.className == "CannonObject"){
+                    this.active = false;
+                    var curSpell = otherObject.curSpell;
+                    otherObject.mateManning.equippedDice.possibleRolls = await [curSpell, curSpell, curSpell];
+                }
+            }
+    }
+};
+
 
 //Pure Magic Magic
 class MagicMissileObject{
@@ -886,6 +935,6 @@ module.exports = {
     WaitObject, PrepareObject, RestObject, SparkObject, CounterObject,
     FireballObject, BurnObject, ExplosionObject, ScorchObject, HearthObject,
     ZapObject, BoltObject, LightningObject, ShockObject, EnergizeObject,
-    SnowballObject,
+    SnowballObject, FreezeObject,
     MagicMissileObject
 };
