@@ -122,6 +122,9 @@ async function startDuel(interaction, client, gameId){
         {
             gameData : currentGame.gameData
         });
+
+    //While in testing
+    await LiveGames.findByIdAndDelete(gameId);
 }
 
 module.exports = {startDuel};
