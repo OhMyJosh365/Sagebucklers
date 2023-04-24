@@ -91,30 +91,13 @@ class CannonObject{
 
     async launch(objectArray){
         this.charge = 0;
-        var targets = [];
-        for(var i = 0; i < objectArray.length; i++){
-            if(objectArray[i].hp && objectArray[i].team != this.team){
-                targets.push(objectArray[i]);
-            }
-        }
-        if(targets.length != []){
-            var target = targets[0];
-            for(var i = 1; i < targets.length; i++){
-                if(Math.sqrt(Math.pow((this.positionX - targets[i].positionX), 2) + 
-                    Math.pow((this.positionY - targets[i].positionY), 2)) <
-                    Math.sqrt(Math.pow((this.positionX - target.positionX), 2) + 
-                    Math.pow((this.positionY - target.positionY), 2))){
-                        target = targets[i];
-                }
-            }
-            var spell = new spellClasses[`${this.currentSpell}Object`](this.team, this.positionX, this.positionY, target.positionX, target.positionY);
-            if(this.energizeBonus > 0 && spell.school == "Storm" && spell.className != "EnergizeObject"){
-                spell.energizeBonus = this.energizeBonus;
-            }
-            await objectArray.push(spell);
-        }
-    }
 
+        var spell = new spellClasses[`${this.currentSpell}Object`](this.team, this.positionX, this.positionY, objectArray);
+        if(this.energizeBonus > 0 && spell.school == "Storm" && spell.className != "EnergizeObject"){
+            spell.energizeBonus = this.energizeBonus;
+        }
+        await objectArray.push(spell);
+    }
 };
 
 module.exports = {CannonObject, leftShipPartPlacements, rightShipPartPlacements};
