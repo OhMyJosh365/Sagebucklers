@@ -391,7 +391,6 @@ class ExplosionObject{
     sizeY = 5;
     pixelSpeed = 12;
     activeFrames = 3;
-    firstFrameFlag = true;
     DmgedCounter = 0;
     
 
@@ -430,7 +429,7 @@ class ExplosionObject{
         this.destX = target.positionX;
         this.destY = target.positionY;
 
-        
+
 
         var targets = [];
         for(var i = 0; i < objectArray.length; i++){
@@ -537,15 +536,42 @@ class ScorchObject{
     
 
     constructor(team, positionX, positionY, objectArray){
+        if(team == null){
+            this.active = false;
+            return;
+        }
+
+        var targets = [];
+        for(var i = 0; i < objectArray.length; i++){
+            if(objectArray[i].hp && objectArray[i].team != team){
+                targets.push(objectArray[i]);
+            }
+        }
+
+        if(targets.length == []){
+            this.active = false;
+            return;
+        }
+
+        var target = targets[0];
+        for(var i = 1; i < targets.length; i++){
+            if(Math.sqrt(Math.pow((positionX - targets[i].positionX), 2) + 
+                Math.pow((positionY - targets[i].positionY), 2)) <
+                Math.sqrt(Math.pow((positionX - target.positionX), 2) + 
+                Math.pow((positionY - target.positionY), 2))){
+                    target = targets[i];
+            }
+        }
+
         this.active = true;
         this.team = team;
         this.positionX = positionX;
         this.positionY = positionY;
-        this.destX = destX;
-        this.destY = destY;
+        this.destX = target.positionX;
+        this.destY = target.positionY;
 
-        this.slope = (destY - positionY) / (destX - positionX);
-        this.offset = -((this.slope * positionX) - positionY);
+        this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
+        this.offset = -((this.slope * this.positionX) - this.positionY);
     }
 
     async onFrame(ctx, objectArray){ 
@@ -589,15 +615,42 @@ class HearthObject{
     
 
     constructor(team, positionX, positionY, objectArray){
+        if(team == null){
+            this.active = false;
+            return;
+        }
+
+        var targets = [];
+        for(var i = 0; i < objectArray.length; i++){
+            if(objectArray[i].hp && objectArray[i].team != team){
+                targets.push(objectArray[i]);
+            }
+        }
+
+        if(targets.length == []){
+            this.active = false;
+            return;
+        }
+
+        var target = targets[0];
+        for(var i = 1; i < targets.length; i++){
+            if(Math.sqrt(Math.pow((positionX - targets[i].positionX), 2) + 
+                Math.pow((positionY - targets[i].positionY), 2)) <
+                Math.sqrt(Math.pow((positionX - target.positionX), 2) + 
+                Math.pow((positionY - target.positionY), 2))){
+                    target = targets[i];
+            }
+        }
+
         this.active = true;
         this.team = team;
         this.positionX = positionX;
         this.positionY = positionY;
-        this.destX = destX;
-        this.destY = destY;
+        this.destX = target.positionX;
+        this.destY = target.positionY;
 
-        this.slope = (destY - positionY) / (destX - positionX);
-        this.offset = -((this.slope * positionX) - positionY);
+        this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
+        this.offset = -((this.slope * this.positionX) - this.positionY);
     }
 
     async onFrame(ctx, objectArray){
@@ -656,15 +709,42 @@ class ZapObject{
 
     
     constructor(team, positionX, positionY, objectArray){
+        if(team == null){
+            this.active = false;
+            return;
+        }
+
+        var targets = [];
+        for(var i = 0; i < objectArray.length; i++){
+            if(objectArray[i].hp && objectArray[i].team != team){
+                targets.push(objectArray[i]);
+            }
+        }
+
+        if(targets.length == []){
+            this.active = false;
+            return;
+        }
+
+        var target = targets[0];
+        for(var i = 1; i < targets.length; i++){
+            if(Math.sqrt(Math.pow((positionX - targets[i].positionX), 2) + 
+                Math.pow((positionY - targets[i].positionY), 2)) <
+                Math.sqrt(Math.pow((positionX - target.positionX), 2) + 
+                Math.pow((positionY - target.positionY), 2))){
+                    target = targets[i];
+            }
+        }
+
         this.active = true;
         this.team = team;
         this.positionX = positionX;
         this.positionY = positionY;
-        this.destX = destX;
-        this.destY = destY;
+        this.destX = target.positionX;
+        this.destY = target.positionY;
 
-        this.slope = (destY - positionY) / (destX - positionX);
-        this.offset = -((this.slope * positionX) - positionY);
+        this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
+        this.offset = -((this.slope * this.positionX) - this.positionY);
     }
 
     async onFrame(ctx, objectArray){ 
@@ -706,15 +786,42 @@ class BoltObject{
 
     
     constructor(team, positionX, positionY, objectArray){
+        if(team == null){
+            this.active = false;
+            return;
+        }
+
+        var targets = [];
+        for(var i = 0; i < objectArray.length; i++){
+            if(objectArray[i].hp && objectArray[i].team != team && objectArray.className == "CannonObject"){
+                targets.push(objectArray[i]);
+            }
+        }
+
+        if(targets.length == []){
+            this.active = false;
+            return;
+        }
+
+        var target = targets[0];
+        for(var i = 1; i < targets.length; i++){
+            if(Math.sqrt(Math.pow((positionX - targets[i].positionX), 2) + 
+                Math.pow((positionY - targets[i].positionY), 2)) <
+                Math.sqrt(Math.pow((positionX - target.positionX), 2) + 
+                Math.pow((positionY - target.positionY), 2))){
+                    target = targets[i];
+            }
+        }
+
         this.active = true;
         this.team = team;
         this.positionX = positionX;
         this.positionY = positionY;
-        this.destX = destX;
-        this.destY = destY;
+        this.destX = target.positionX;
+        this.destY = target.positionY;
 
-        this.slope = (destY - positionY) / (destX - positionX);
-        this.offset = -((this.slope * positionX) - positionY);
+        this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
+        this.offset = -((this.slope * this.positionX) - this.positionY);
     }
 
     async onFrame(ctx, objectArray){ 
@@ -755,10 +862,37 @@ class LightningObject{
     
 
     constructor(team, positionX, positionY, objectArray){
+        if(team == null){
+            this.active = false;
+            return;
+        }
+
+        var targets = [];
+        for(var i = 0; i < objectArray.length; i++){
+            if(objectArray[i].hp && objectArray[i].team != team){
+                targets.push(objectArray[i]);
+            }
+        }
+
+        if(targets.length == []){
+            this.active = false;
+            return;
+        }
+
+        var target = targets[0];
+        for(var i = 1; i < targets.length; i++){
+            if(Math.sqrt(Math.pow((positionX - targets[i].positionX), 2) + 
+                Math.pow((positionY - targets[i].positionY), 2)) <
+                Math.sqrt(Math.pow((positionX - target.positionX), 2) + 
+                Math.pow((positionY - target.positionY), 2))){
+                    target = targets[i];
+            }
+        }
+
         this.active = true;
         this.team = team;
-        this.positionX = destX;
-        this.positionY = destY;
+        this.positionX = target.positionX;
+        this.positionY = target.positionY;
     }
 
     async onFrame(ctx, objectArray){ 
@@ -803,15 +937,42 @@ class ShockObject{
     
 
     constructor(team, positionX, positionY, objectArray){
+        if(team == null){
+            this.active = false;
+            return;
+        }
+
+        var targets = [];
+        for(var i = 0; i < objectArray.length; i++){
+            if(objectArray[i].hp && objectArray[i].team != team){
+                targets.push(objectArray[i]);
+            }
+        }
+
+        if(targets.length == []){
+            this.active = false;
+            return;
+        }
+
+        var target = targets[0];
+        for(var i = 1; i < targets.length; i++){
+            if(Math.sqrt(Math.pow((positionX - targets[i].positionX), 2) + 
+                Math.pow((positionY - targets[i].positionY), 2)) <
+                Math.sqrt(Math.pow((positionX - target.positionX), 2) + 
+                Math.pow((positionY - target.positionY), 2))){
+                    target = targets[i];
+            }
+        }
+
         this.active = true;
         this.team = team;
         this.positionX = positionX;
         this.positionY = positionY;
-        this.destX = destX;
-        this.destY = destY;
+        this.destX = target.positionX;
+        this.destY = target.positionY;
 
-        this.slope = (destY - positionY) / (destX - positionX);
-        this.offset = -((this.slope * positionX) - positionY);
+        this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
+        this.offset = -((this.slope * this.positionX) - this.positionY);
     }
 
     async onFrame(ctx, objectArray){
