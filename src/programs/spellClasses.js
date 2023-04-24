@@ -177,8 +177,6 @@ class CounterObject{
         this.team = team;
         this.positionX = positionX-20;
         this.positionY = positionY-20;
-        this.destX = destX;
-        this.destY = destY;
     }
 
     async onFrame(ctx, objectArray){ 
