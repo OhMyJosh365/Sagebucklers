@@ -117,13 +117,13 @@ async function startDuel(interaction, client, gameId){
 
     interaction.editReply({embeds: [embed], files: ["./src/Images/animated.gif"]});
 
-    currentGame.gameData[0].activeDuels[matchName].objectArray = await objectArray;
-    await LiveGames.findByIdAndUpdate(gameId,
-        {
-            gameData : currentGame.gameData
-        });
+    // currentGame.gameData[0].activeDuels[matchName].objectArray = await objectArray;
+    // await LiveGames.findByIdAndUpdate(gameId,
+    //     {
+    //         gameData : currentGame.gameData
+    //     });
 
-    //While in testing
+    //While in testing, replace ^^ with this:
     await LiveGames.findByIdAndDelete(gameId);
 }
 

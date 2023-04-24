@@ -396,56 +396,86 @@ class ExplosionObject{
     
 
     constructor(team, positionX, positionY, objectArray){
+        if(team == null){
+            this.active = false;
+            return;
+        }
+
+        var targets = [];
+        for(var i = 0; i < objectArray.length; i++){
+            if(objectArray[i].hp && objectArray[i].team != team){
+                targets.push(objectArray[i]);
+            }
+        }
+
+        if(targets.length == []){
+            this.active = false;
+            return;
+        }
+
+        var target = targets[0];
+        for(var i = 1; i < targets.length; i++){
+            if(Math.sqrt(Math.pow((positionX - targets[i].positionX), 2) + 
+                Math.pow((positionY - targets[i].positionY), 2)) <
+                Math.sqrt(Math.pow((positionX - target.positionX), 2) + 
+                Math.pow((positionY - target.positionY), 2))){
+                    target = targets[i];
+            }
+        }
+
         this.active = true;
         this.team = team;
         this.positionX = positionX;
         this.positionY = positionY;
-        this.destX = destX;
-        this.destY = destY;
+        this.destX = target.positionX;
+        this.destY = target.positionY;
+
+        
+
+        var targets = [];
+        for(var i = 0; i < objectArray.length; i++){
+            if(objectArray[i].hp && objectArray[i].team != this.team){
+                if(objectArray[i].positionX != this.destX && objectArray[i].positionY != this.destY){
+                    targets.push(objectArray[i]);
+                }
+            }
+        }
+
+        if(targets.length == []){
+            this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
+            this.offset = -((this.slope * this.positionX) - this.positionY);
+            return;
+        }
+
+        var target = targets[0];
+        for(var i = 1; i < targets.length; i++){
+
+            if(Math.sqrt(Math.pow((this.destX - targets[i].positionX), 2) + 
+            Math.pow((this.destY - targets[i].positionY), 2)) <
+            Math.sqrt(Math.pow((this.destX - target.positionX), 2) + 
+            Math.pow((this.destY - target.positionY), 2))){
+                target = targets[i];
+            }
+
+        }
+
+        //Displace destination
+        var tempSlope = (target.positionY - this.destY) / (target.positionX - this.destX);
+        var tempOffSet = -((tempSlope * this.destX) - this.destY);
+
+        var distance = Math.sqrt((target.positionX - this.destX) ** 2 + (target.positionY - this.destY) ** 2);
+        var angle = Math.atan(tempSlope);
+        var newDistance = distance - 25;
+        this.destX = target.positionX - newDistance * Math.cos(angle);
+        this.destY = target.positionY - newDistance * Math.sin(angle);
+
+        //Calc slope
+        this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
+        this.offset = -((this.slope * this.positionX) - this.positionY);
     }
 
     async onFrame(ctx, objectArray){
         if(this.DmgedCounter > 0) this.DmgedCounter = -1;
-
-        if(this.firstFrameFlag){
-            //Get a target to hit both
-            var targets = [];
-            for(var i = 0; i < objectArray.length; i++){
-                if(objectArray[i].hp && objectArray[i].team != this.team){
-                    if(objectArray[i].positionX != this.destX && objectArray[i].positionY != this.destY){
-                        targets.push(objectArray[i]);
-                    }
-                }
-            }
-            if(targets.length != []){
-                var target = targets[0];
-                for(var i = 1; i < targets.length; i++){
-
-                    if(Math.sqrt(Math.pow((this.destX - targets[i].positionX), 2) + 
-                    Math.pow((this.destY - targets[i].positionY), 2)) <
-                    Math.sqrt(Math.pow((this.destX - target.positionX), 2) + 
-                    Math.pow((this.destY - target.positionY), 2))){
-                        target = targets[i];
-                    }
-
-                }
-                
-                //Displace destination
-                var tempSlope = (target.positionY - this.destY) / (target.positionX - this.destX);
-                var tempOffSet = -((tempSlope * this.destX) - this.destY);
-
-                var distance = Math.sqrt((target.positionX - this.destX) ** 2 + (target.positionY - this.destY) ** 2);
-                var angle = Math.atan(tempSlope);
-                var newDistance = distance - 25;
-                this.destX = target.positionX - newDistance * Math.cos(angle);
-                this.destY = target.positionY - newDistance * Math.sin(angle);
-
-                //Calc slope
-                this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
-                this.offset = -((this.slope * this.positionX) - this.positionY);
-            }
-            this.firstFrameFlag = false;
-        }
 
         await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
         if(this.slope != 0 && this.offset != 0){

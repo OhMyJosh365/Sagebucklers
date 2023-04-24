@@ -4,7 +4,8 @@ class DiceObject{
         "Spark",
         "Counter",
         "Fireball",
-        "Burn"
+        "Burn",
+        "Explosion"
     ];
 
     possibleRolls = [];
