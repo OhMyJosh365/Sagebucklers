@@ -1207,6 +1207,84 @@ class FreezeObject{
 };
 
 
+//Conjure Magic
+class HealObject{
+    className = "HealObject";
+    iconName = "heal";
+    school = "Conjure";
+    team = "left";
+    active = true;
+    maxCharge = 10;
+    positionX = 0;
+    positionY = 0;
+    destX = 0;
+    destY = 0;
+    slope = 0;
+    offset = 0;
+    sizeX = 15;
+    sizeY = 15;
+    pixelSpeed = 5;
+    
+
+    constructor(team, positionX, positionY, objectArray){
+        if(team == null){
+            this.active = false;
+            return;
+        }
+
+        var targets = [];
+        for(var i = 0; i < objectArray.length; i++){
+            if(objectArray[i].hp && objectArray[i].team == team){
+                targets.push(objectArray[i]);
+            }
+        }
+
+        if(targets.length == []){
+            this.active = false;
+            return;
+        }
+
+        var target = targets[0];
+        for(var i = 1; i < targets.length; i++){
+            if((targets[i].hp / targets[i].maxHp) < (target.hp / target.maxHp)){
+                target = targets[i];
+            }
+        }
+
+        this.active = true;
+        this.team = team;
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.destX = target.positionX;
+        this.destY = target.positionY;
+
+        this.slope = (this.destX - this.positionX) / (this.destY - this.positionY);
+        this.offset = -((this.slope * this.positionY) - this.positionX);
+    }
+
+    async onFrame(ctx, objectArray){ 
+        await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
+        this.positionY += (this.team == "right") ? this.pixelSpeed : -this.pixelSpeed;
+        this.positionX = (this.slope * this.positionX) + this.offset;
+    }
+
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
+        if (this.positionX < otherObject.positionX + otherObject.sizeX &&
+            this.positionX + this.sizeX > otherObject.positionX &&
+            this.positionY < otherObject.positionY + otherObject.sizeY &&
+            this.positionY + this.sizeY > otherObject.positionY) {
+                if(otherObject.hp && otherObject.team == this.team){
+                    this.active = false;
+                    otherObject.hp += 8;
+                    if(otherObject.hp > otherObject.maxHp){
+                        otherObject.hp = otherObject.maxHp;
+                    }
+                }
+            }
+    }
+};
+
+
 //Pure Magic Magic
 class MagicMissileObject{
     className = "MagicMissleObject";
@@ -1411,5 +1489,6 @@ module.exports = {
     FireballObject, BurnObject, ExplosionObject, ScorchObject, HearthObject,
     ZapObject, BoltObject, LightningObject, ShockObject, EnergizeObject,
     SnowballObject, FreezeObject,
+    HealObject,
     MagicMissileObject, ArmageddonObject, TrueSmiteObject
 };
