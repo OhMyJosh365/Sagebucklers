@@ -1215,6 +1215,8 @@ class HealObject{
     team = "left";
     active = true;
     maxCharge = 10;
+    spawnX = 0;
+    spawnY = 0;
     positionX = 0;
     positionY = 0;
     destX = 0;
@@ -1253,19 +1255,20 @@ class HealObject{
 
         this.active = true;
         this.team = team;
-        this.positionX = positionX;
-        this.positionY = positionY;
+        this.positionX = this.spawnX = positionX;
+        this.positionY = this.spawnY = positionY;
         this.destX = target.positionX;
         this.destY = target.positionY;
 
-        this.slope = (this.destX - this.positionX) / (this.destY - this.positionY);
-        this.offset = -((this.slope * this.positionY) - this.positionX);
+        this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
+        this.offset = ((this.slope * this.positionY) - this.positionX);
     }
 
     async onFrame(ctx, objectArray){ 
         await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
-        this.positionY += (this.team == "right") ? this.pixelSpeed : -this.pixelSpeed;
-        this.positionX = (this.slope * this.positionX) + this.offset;
+        if(this.positionY != this.destY) 
+            this.positionY += (this.positionY < this.destY) ? this.pixelSpeed : -this.pixelSpeed;
+        this.positionX = (this.positionY / this.slope) - (this.offset * this.slope);
     }
 
     async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
@@ -1273,7 +1276,9 @@ class HealObject{
             this.positionX + this.sizeX > otherObject.positionX &&
             this.positionY < otherObject.positionY + otherObject.sizeY &&
             this.positionY + this.sizeY > otherObject.positionY) {
-                if(otherObject.hp && otherObject.team == this.team){
+                if(otherObject.hp && otherObject.team == this.team &&
+                    !(otherObject.positionX == this.spawnX && otherObject.positionY == this.spawnY)){
+                    
                     this.active = false;
                     otherObject.hp += 8;
                     if(otherObject.hp > otherObject.maxHp){

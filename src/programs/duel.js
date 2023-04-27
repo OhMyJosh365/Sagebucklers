@@ -92,6 +92,7 @@ async function startDuel(interaction, client, gameId){
                 objectArray[j].positionX >= sizeH ||
                 objectArray[j].positionX >= sizeW){
                 if(!(objectArray[j].className == "ArmageddonObject" && objectArray[j].active == false)){
+                    console.log(objectArray[j].className + " " + objectArray[j].positionX + " " + objectArray[j].positionY + " " + objectArray[j].slope + " " + objectArray[j].offset)
                     objectArray.splice(j, 1);
                     j--;
                 }    
@@ -117,6 +118,7 @@ async function startDuel(interaction, client, gameId){
 
     interaction.editReply({embeds: [embed], files: ["./src/Images/animated.gif"]});
 
+    
     // currentGame.gameData[0].activeDuels[matchName].objectArray = await objectArray;
     // await LiveGames.findByIdAndUpdate(gameId,
     //     {
