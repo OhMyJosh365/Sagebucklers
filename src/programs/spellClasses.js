@@ -1338,8 +1338,11 @@ class BreezeObject{
 
         var target = targets[0];
         for(var i = 1; i < targets.length; i++){
-            if((targets[i].hp / targets[i].maxHp) < (target.hp / target.maxHp)){
-                target = targets[i];
+            if(Math.sqrt(Math.pow((positionX - targets[i].positionX), 2) + 
+                Math.pow((positionY - targets[i].positionY), 2)) <
+                Math.sqrt(Math.pow((positionX - target.positionX), 2) + 
+                Math.pow((positionY - target.positionY), 2))){
+                    target = targets[i];
             }
         }
 
@@ -1396,7 +1399,7 @@ class TailwindObject{
     offset = 0;
     sizeX = 15;
     sizeY = 15;
-    pixelSpeed = 11;
+    pixelSpeed = 3;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -1407,7 +1410,7 @@ class TailwindObject{
 
         var targets = [];
         for(var i = 0; i < objectArray.length; i++){
-            if(objectArray[i].pixelSpeed && objectArray[i].school != "Gust" && objectArray[i].school != "Conjure" && objectArray[i].team == team &&
+            if(objectArray[i].hp && objectArray[i].team == team &&
                 !(objectArray[i].positionX == positionX && objectArray[i].positionY == positionY)){
                 targets.push(objectArray[i]);
             }
@@ -1420,7 +1423,7 @@ class TailwindObject{
 
         var target = targets[0];
         for(var i = 1; i < targets.length; i++){
-            if((target.positionX * target.pixelSpeed /this.pixelSpeed) > (targets[i].positionX * targets[i].pixelSpeed /this.pixelSpeed)){
+            if((targets[i].hp / targets[i].maxHp) < (target.hp / target.maxHp)){
                 target = targets[i];
             }
         }
