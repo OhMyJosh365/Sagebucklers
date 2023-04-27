@@ -1236,7 +1236,8 @@ class HealObject{
 
         var targets = [];
         for(var i = 0; i < objectArray.length; i++){
-            if(objectArray[i].hp && objectArray[i].team == team){
+            if(objectArray[i].hp && objectArray[i].team == team &&
+                !(objectArray[i].positionX == positionX && objectArray[i].positionY == positionY)){
                 targets.push(objectArray[i]);
             }
         }
@@ -1261,7 +1262,7 @@ class HealObject{
         this.destY = target.positionY;
 
         this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
-        this.offset = ((this.slope * this.positionY) - this.positionX);
+        this.offset = -((this.slope * this.positionX) - this.positionY);
     }
 
     async onFrame(ctx, objectArray){ 
@@ -1269,6 +1270,14 @@ class HealObject{
         if(this.positionY != this.destY) 
             this.positionY += (this.positionY < this.destY) ? this.pixelSpeed : -this.pixelSpeed;
         this.positionX = (this.positionY / this.slope) + (this.offset * this.slope);
+
+        if(this.destX != this.positionX){
+            this.positionX += (this.destX > this.positionX) ? this.pixelSpeed : -this.pixelSpeed;
+            this.positionY = (this.slope * this.positionX) + this.offset;
+        }
+        else{
+            this.positionY += (this.destY > this.positionY) ? this.pixelSpeed : -this.pixelSpeed;
+        }
     }
 
     async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
