@@ -98,6 +98,7 @@ async function startDuel(interaction, client, gameId){
                 if(currentGame.gameData[0].activeDuels[matchName][side].weight >= 100){
                     await ctx.drawImage(await Canvas.loadImage(`./src/Images/SunkenShip.png`), ((side == "LeftShip") ? 0 : 125), 0, 125, 250);
                     i = 150;
+                    continue;
                 }
                 
             }

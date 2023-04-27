@@ -1154,7 +1154,7 @@ class SplashObject{
     sizeX = 15;
     sizeY = 15;
     pixelSpeed = 8;
-    effect = 25;
+    effect = 1;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -1209,6 +1209,7 @@ class SplashObject{
             this.positionY + this.sizeY > otherObject.positionY) {
                 if(otherObject.hp && otherObject.team != this.team){
                     otherObject.weight += this.effect;
+                    this.active = false;
                 }
             }
     }
@@ -1858,7 +1859,7 @@ class WooshObject{
             this.positionY + this.sizeY > otherObject.positionY) {
                 if(otherObject.hp && otherObject.team == this.team){
                     this.active = false;
-                    otherObject.effectBonus += effect;
+                    otherObject.effectBonus += this.effect;
                 }
             }
     }
