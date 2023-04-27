@@ -1381,7 +1381,7 @@ class BreezeObject{
     }
 };
 
-class BreezeObject{
+class TailwindObject{
     className = "TailwindObject";
     iconName = "tailwind";
     school = "Gust";
@@ -1407,7 +1407,7 @@ class BreezeObject{
 
         var targets = [];
         for(var i = 0; i < objectArray.length; i++){
-            if(objectArray[i].pixelSpeed && objectArray[i].team == team &&
+            if(objectArray[i].pixelSpeed && objectArray[i].school != "Gust" && objectArray[i].school != "Conjure" && objectArray[i].team == team &&
                 !(objectArray[i].positionX == positionX && objectArray[i].positionY == positionY)){
                 targets.push(objectArray[i]);
             }
@@ -1429,10 +1429,8 @@ class BreezeObject{
         this.team = team;
         this.positionX = positionX;
         this.positionY = positionY;
-        this.destX = target.positionX;
-        this.destY = target.positionY;
 
-        this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
+        this.slope = (target.positionY - this.positionY) / ((target.positionX * target.slope) - (this.positionX * this.slope));
         this.offset = -((this.slope * this.positionX) - this.positionY);
     }
 
@@ -1772,6 +1770,6 @@ module.exports = {
     ZapObject, BoltObject, LightningObject, ShockObject, EnergizeObject,
     SnowballObject, FreezeObject,
     HealObject,
-    BreezeObject,
+    BreezeObject, TailwindObject,
     MagicMissileObject, ArmageddonObject, TrueSmiteObject, CleanseObject
 };
