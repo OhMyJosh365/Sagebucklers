@@ -1429,8 +1429,10 @@ class TailwindObject{
         this.team = team;
         this.positionX = positionX;
         this.positionY = positionY;
+        this.destX = target.positionX;
+        this.destY = target.positionY;
 
-        this.slope = (target.positionY - this.positionY) / ((target.positionX * target.slope) - (this.positionX * this.slope));
+        this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
         this.offset = -((this.slope * this.positionX) - this.positionY);
     }
 
@@ -1451,11 +1453,9 @@ class TailwindObject{
             this.positionX + this.sizeX > otherObject.positionX &&
             this.positionY < otherObject.positionY + otherObject.sizeY &&
             this.positionY + this.sizeY > otherObject.positionY) {
-                if(otherObject.hp && otherObject.team == this.team &&
-                    !(otherObject.positionX == this.spawnX && otherObject.positionY == this.spawnY)){
-                    
+                if(otherObject.hp && otherObject.team == this.team){
                     this.active = false;
-                    otherObject.charge += 8;
+                    otherObject.pixelSpeedBonus += 3;
                 }
             }
     }
