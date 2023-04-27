@@ -73,7 +73,6 @@ async function startDuel(interaction, client, gameId){
         for(var j = 0; j < objectArray.length; j++){
             await objectArray[j].onFrame(ctx, objectArray);
         }
-        encoder.addFrame(ctx);
 
         //Check for collisions
         for(var j = 0; j < objectArray.length; j++){
@@ -86,6 +85,22 @@ async function startDuel(interaction, client, gameId){
 
         //Clean Up
         for(var j = 0; j < objectArray.length; j++){
+            if(objectArray[j].weight > 0){
+                var side = (objectArray[j].team == "left") ? "LeftShip" : "RightShip";
+                if(!currentGame.gameData[0].activeDuels[matchName][side].weight){
+                    currentGame.gameData[0].activeDuels[matchName][side].weight = objectArray[j].weight;
+                }
+                else{
+                    currentGame.gameData[0].activeDuels[matchName][side].weight += objectArray[j].weight;
+                }
+                objectArray[j].weight = 0;
+
+                if(currentGame.gameData[0].activeDuels[matchName][side].weight >= 100){
+                    await ctx.drawImage(await Canvas.loadImage(`./src/Images/SunkenShip.png`), ((side == "LeftShip") ? 0 : 125), 0, 125, 250);
+                    i = 150;
+                }
+                
+            }
             if(!objectArray[j].active ||
                 objectArray[j].positionX <= 0 ||
                 objectArray[j].positionY <= 0 ||
@@ -97,7 +112,7 @@ async function startDuel(interaction, client, gameId){
                 }    
             }
         }
-
+        encoder.addFrame(ctx);
     }
     encoder.finish();
     

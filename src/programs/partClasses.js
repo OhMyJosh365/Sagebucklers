@@ -38,6 +38,7 @@ class CannonObject{
     chargeRate = 1;
     energizeBonus = 0;
     pixelSpeedBonus = 0;
+    weight = 0;
     currentSpell = null;
     
 
