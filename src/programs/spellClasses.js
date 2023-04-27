@@ -175,8 +175,8 @@ class CounterObject{
     constructor(team, positionX, positionY, objectArray){
         this.active = true;
         this.team = team;
-        this.positionX = positionX-20;
-        this.positionY = positionY-20;
+        this.positionX = positionX - 20;
+        this.positionY = positionY - 20;
     }
 
     async onFrame(ctx, objectArray){ 
@@ -1598,7 +1598,7 @@ class CleanseObject{
     sizeX = 15;
     sizeY = 15;
     pixelSpeed = 5;
-    activeFrame = 5;
+    activeFrames = 5;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -1655,8 +1655,8 @@ class CleanseObject{
                 this.positionY < this.destY + 15 &&
                 this.positionY + this.sizeY > this.destY){
 
-                this.positionX -= 15;
-                this.positionY -= 15;
+                this.positionX = this.destX - 15;
+                this.positionY = this.destY - 15;
                 this.sizeX = 45;
                 this.sizeY = 45;
                 this.slope = 0;
@@ -1671,7 +1671,16 @@ class CleanseObject{
         }
     }
 
-    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){}
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
+        if (this.positionX < otherObject.positionX + otherObject.sizeX &&
+            this.positionX + this.sizeX > otherObject.positionX &&
+            this.positionY < otherObject.positionY + otherObject.sizeY &&
+            this.positionY + this.sizeY > otherObject.positionY) {
+                if(otherObject.team != this.team){
+                    otherObject.active = false;
+                }
+            }
+    }
 };
 
 
@@ -1682,5 +1691,5 @@ module.exports = {
     SnowballObject, FreezeObject,
     HealObject,
     BreezeObject,
-    MagicMissileObject, ArmageddonObject, TrueSmiteObject
+    MagicMissileObject, ArmageddonObject, TrueSmiteObject, CleanseObject
 };
