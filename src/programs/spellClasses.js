@@ -1268,7 +1268,7 @@ class HealObject{
         await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
         if(this.positionY != this.destY) 
             this.positionY += (this.positionY < this.destY) ? this.pixelSpeed : -this.pixelSpeed;
-        this.positionX = (this.positionY / this.slope) - (this.offset * this.slope);
+        this.positionX = (this.positionY / this.slope) + (this.offset * this.slope);
     }
 
     async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
