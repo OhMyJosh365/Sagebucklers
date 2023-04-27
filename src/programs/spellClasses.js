@@ -1060,6 +1060,83 @@ class EnergizeObject{
     async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){}
 };
 
+//Sea Magic
+class TidalWaveObject{
+    className = "TidalWaveObject";
+    iconName = "tidalwave";
+    school = "Sea";
+    team = "left";
+    active = true;
+    maxCharge = 9;
+    positionX = 0;
+    positionY = 0;
+    destX = 0;
+    destY = 0;
+    slope = 0;
+    offset = 0;
+    sizeX = 15;
+    sizeY = 15;
+    pixelSpeed = 8;
+    effect = 5;
+    
+
+    constructor(team, positionX, positionY, objectArray){
+        if(team == null){
+            this.active = false;
+            return;
+        }
+
+        var targets = [];
+        for(var i = 0; i < objectArray.length; i++){
+            if(objectArray[i].hp && objectArray[i].team != team){
+                targets.push(objectArray[i]);
+            }
+        }
+
+        if(targets.length == []){
+            this.active = false;
+            return;
+        }
+
+        var target = targets[0];
+        for(var i = 1; i < targets.length; i++){
+            if(Math.sqrt(Math.pow((positionX - targets[i].positionX), 2) + 
+                Math.pow((positionY - targets[i].positionY), 2)) <
+                Math.sqrt(Math.pow((positionX - target.positionX), 2) + 
+                Math.pow((positionY - target.positionY), 2))){
+                    target = targets[i];
+            }
+        }
+
+        this.active = true;
+        this.team = team;
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.destX = target.positionX;
+        this.destY = target.positionY;
+
+        this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
+        this.offset = -((this.slope * this.positionX) - this.positionY);
+    }
+
+    async onFrame(ctx, objectArray){ 
+        await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
+        this.positionX += (this.team == "left") ? this.pixelSpeed : -this.pixelSpeed;
+        this.positionY = (this.slope * this.positionX) + this.offset;
+    }
+
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
+        if (this.positionX < otherObject.positionX + otherObject.sizeX &&
+            this.positionX + this.sizeX > otherObject.positionX &&
+            this.positionY < otherObject.positionY + otherObject.sizeY &&
+            this.positionY + this.sizeY > otherObject.positionY) {
+                if(otherObject.hp && otherObject.team != this.team){
+                    otherObject.hp -= this.effect;
+                }
+            }
+    }
+};
+
 
 //Frost Magic
 class SnowballObject{
@@ -1218,6 +1295,153 @@ class FreezeObject{
                     otherObject.mateManning.equippedDice.possibleRolls = spells;
                 }
             }
+    }
+};
+
+class HailObject{
+    className = "HailObject";
+    iconName = "hail";
+    school = "Frost";
+    team = "left";
+    active = true;
+    maxCharge = 20;
+    positionX = 0;
+    positionY = 0;
+    destX = 0;
+    destY = 0;
+    slope = 0;
+    offset = 0;
+    sizeX = 5;
+    sizeY = 5;
+    pixelSpeed = 12;
+    activeFrames = 3;
+    DmgedCounter = 0;
+    effect = 6;
+    
+
+    constructor(team, positionX, positionY, objectArray){
+        if(team == null){
+            this.active = false;
+            return;
+        }
+
+        var targets = [];
+        for(var i = 0; i < objectArray.length; i++){
+            if(objectArray[i].charge && objectArray[i].team != team){
+                targets.push(objectArray[i]);
+            }
+        }
+
+        if(targets.length == []){
+            this.active = false;
+            return;
+        }
+
+        var target = targets[0];
+        for(var i = 1; i < targets.length; i++){
+            if(Math.sqrt(Math.pow((positionX - targets[i].positionX), 2) + 
+                Math.pow((positionY - targets[i].positionY), 2)) <
+                Math.sqrt(Math.pow((positionX - target.positionX), 2) + 
+                Math.pow((positionY - target.positionY), 2))){
+                    target = targets[i];
+            }
+        }
+
+        this.active = true;
+        this.team = team;
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.destX = target.positionX;
+        this.destY = target.positionY;
+
+
+
+        var targets = [];
+        for(var i = 0; i < objectArray.length; i++){
+            if(objectArray[i].hp && objectArray[i].team != this.team){
+                if(objectArray[i].positionX != this.destX && objectArray[i].positionY != this.destY){
+                    targets.push(objectArray[i]);
+                }
+            }
+        }
+
+        if(targets.length == []){
+            this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
+            this.offset = -((this.slope * this.positionX) - this.positionY);
+            return;
+        }
+
+        var target = targets[0];
+        for(var i = 1; i < targets.length; i++){
+
+            if(Math.sqrt(Math.pow((this.destX - targets[i].positionX), 2) + 
+            Math.pow((this.destY - targets[i].positionY), 2)) <
+            Math.sqrt(Math.pow((this.destX - target.positionX), 2) + 
+            Math.pow((this.destY - target.positionY), 2))){
+                target = targets[i];
+            }
+
+        }
+
+        //Displace destination
+        var tempSlope = (target.positionY - this.destY) / (target.positionX - this.destX);
+        var tempOffSet = -((tempSlope * this.destX) - this.destY);
+
+        var distance = Math.sqrt((target.positionX - this.destX) ** 2 + (target.positionY - this.destY) ** 2);
+        var angle = Math.atan(tempSlope);
+        var newDistance = distance - 25;
+        this.destX = target.positionX - newDistance * Math.cos(angle);
+        this.destY = target.positionY - newDistance * Math.sin(angle);
+
+        //Calc slope
+        this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
+        this.offset = -((this.slope * this.positionX) - this.positionY);
+    }
+
+    async onFrame(ctx, objectArray){
+        if(this.DmgedCounter > 0) this.DmgedCounter = -1;
+
+        await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
+        if(this.slope != 0 && this.offset != 0){
+            this.positionX += (this.team == "left") ? this.pixelSpeed : -this.pixelSpeed;
+            this.positionY = (this.slope * this.positionX) + this.offset;
+
+            if(
+                (this.team == "left" && this.positionX > this.destX) ||
+                (this.team == "right" && this.positionY > this.destY)
+            ){
+                this.positionX -= 30;
+                this.positionY -= 30;
+                this.sizeX = 75;
+                this.sizeY = 75;
+                this.slope = 0;
+                this.offset = 0;
+            }
+        }
+        else{
+            this.activeFrames--;
+            if(this.activeFrames <= 0){
+                this.active = false;
+            }
+        }
+        
+    }
+
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
+        if(this.slope == 0 && this.offset == 0 && this.DmgedCounter >= 0){
+            if (this.positionX < otherObject.positionX + otherObject.sizeX &&
+                this.positionX + this.sizeX > otherObject.positionX &&
+                this.positionY < otherObject.positionY + otherObject.sizeY &&
+                this.positionY + this.sizeY > otherObject.positionY) {
+                    if(otherObject.hp && otherObject.team != this.team){
+                        this.DmgedCounter++;
+                        otherObject.charge -= this.effect;
+                        if(otherObject.charge > 0){
+                            otherObject.charge = 0;
+                        }
+                    }
+                }
+        }
     }
 };
 
@@ -1873,7 +2097,8 @@ module.exports = {
     WaitObject, PrepareObject, RestObject, SparkObject, CounterObject,
     FireballObject, BurnObject, ExplosionObject, ScorchObject, HearthObject,
     ZapObject, BoltObject, LightningObject, ShockObject, EnergizeObject,
-    SnowballObject, FreezeObject,
+    TidalWaveObject,
+    SnowballObject, FreezeObject, HailObject,
     HealObject,
     BreezeObject, TailwindObject, WooshObject,
     MagicMissileObject, ArmageddonObject, TrueSmiteObject, CleanseObject
