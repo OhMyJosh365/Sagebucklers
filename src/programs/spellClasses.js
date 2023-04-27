@@ -1225,7 +1225,7 @@ class HealObject{
     offset = 0;
     sizeX = 15;
     sizeY = 15;
-    pixelSpeed = 5;
+    pixelSpeed = 3;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -1267,9 +1267,6 @@ class HealObject{
 
     async onFrame(ctx, objectArray){ 
         await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
-        if(this.positionY != this.destY) 
-            this.positionY += (this.positionY < this.destY) ? this.pixelSpeed : -this.pixelSpeed;
-        this.positionX = (this.positionY / this.slope) + (this.offset * this.slope);
 
         if(this.destX != this.positionX){
             this.positionX += (this.destX > this.positionX) ? this.pixelSpeed : -this.pixelSpeed;
