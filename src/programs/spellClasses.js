@@ -21,6 +21,7 @@ class PrepareObject{
     positionX = 0;
     positionY = 0;
     team = "left";
+    effect = 50;
 
     constructor(team, positionX, positionY, tpositionX, tpositionY){
         this.team = team;
@@ -37,7 +38,7 @@ class PrepareObject{
                 this.positionY == objectArray[i].positionY &&
                 objectArray[i].className == "CannonObject"
             ){
-                objectArray[i].charge += (this.maxCharge/2);
+                objectArray[i].charge += (this.maxCharge * (this.effect / 100));
                 i = objectArray.length;
             }
         }
@@ -55,6 +56,7 @@ class RestObject{
     positionX = 0;
     positionY = 0;
     team = "left";
+    effect = 25;
 
     constructor(team, positionX, positionY, tpositionX, tpositionY){
         this.team = team;
@@ -71,7 +73,7 @@ class RestObject{
                 this.positionY == objectArray[i].positionY &&
                 objectArray[i].className == "CannonObject"
             ){
-                objectArray[i].hp += (objectArray[i].maxHp*.25);
+                objectArray[i].hp += (objectArray[i].maxHp * (this.effect/100));
                 if(objectArray[i].maxHp <= objectArray[i].hp) objectArray[i].hp = objectArray[i].maxHp;
                 i = objectArray.length;
             }
@@ -98,6 +100,7 @@ class SparkObject{
     sizeX = 15;
     sizeY = 15;
     pixelSpeed = 5;
+    effect = 5;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -152,7 +155,7 @@ class SparkObject{
             this.positionY + this.sizeY > otherObject.positionY) {
                 if(otherObject.hp && otherObject.team != this.team){
                     this.active = false;
-                    otherObject.hp -= 6;
+                    otherObject.hp -= this.effect;
                 }
             }
     }
@@ -169,7 +172,7 @@ class CounterObject{
     positionY = 0;
     sizeX = 55;
     sizeY = 55;
-    activeFrames = 5;
+    effect = 5;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -181,7 +184,7 @@ class CounterObject{
 
     async onFrame(ctx, objectArray){ 
         await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
-        if(this.activeFrames-- <= 0){
+        if(this.effect-- <= 0){
             this.active = false;
         }
     }
@@ -216,6 +219,7 @@ class FireballObject{
     sizeX = 15;
     sizeY = 15;
     pixelSpeed = 8;
+    effect = 10;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -270,7 +274,7 @@ class FireballObject{
             this.positionY + this.sizeY > otherObject.positionY) {
                 if(otherObject.hp && otherObject.team != this.team){
                     this.active = false;
-                    otherObject.hp -= 10;
+                    otherObject.hp -= this.effect;
                 }
             }
     }
@@ -293,6 +297,7 @@ class BurnObject{
     sizeY = 15;
     pixelSpeed = 8;
     activeFrames = 20;
+    effect = 2;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -366,7 +371,7 @@ class BurnObject{
                             this.positionY + this.sizeY > objectArray[i].positionY &&
                             objectArray[i].className == "CannonObject"
                         ){
-                            objectArray[i].hp -= 2;
+                            objectArray[i].hp -= this.effect;
                         }
                     }
                 }
@@ -392,6 +397,7 @@ class ExplosionObject{
     pixelSpeed = 12;
     activeFrames = 3;
     DmgedCounter = 0;
+    effect = 6;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -510,7 +516,7 @@ class ExplosionObject{
                 this.positionY + this.sizeY > otherObject.positionY) {
                     if(otherObject.hp && otherObject.team != this.team){
                         this.DmgedCounter++;
-                        otherObject.hp -= 6;
+                        otherObject.hp -= this.effect;
                     }
                 }
         }
@@ -533,6 +539,7 @@ class ScorchObject{
     sizeX = 20;
     sizeY = 10;
     pixelSpeed = 20;
+    effect = 7;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -586,7 +593,7 @@ class ScorchObject{
             this.positionY < otherObject.positionY + otherObject.sizeY &&
             this.positionY + this.sizeY > otherObject.positionY) {
                 if(otherObject.hp && otherObject.team != this.team){
-                    otherObject.maxHp -= 7;
+                    otherObject.maxHp -= this.effect;
                     if(otherObject.maxHp < otherObject.hp){
                         otherObject.hp = otherObject.maxHp;
                     }
@@ -612,6 +619,7 @@ class HearthObject{
     sizeY = 15;
     pixelSpeed = 8;
     firstFrameFlag = true;
+    effect = 10;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -662,7 +670,7 @@ class HearthObject{
                     this.positionY == objectArray[i].positionY &&
                     objectArray[i].className == "CannonObject"
                 ){
-                    objectArray[i].hp -= 10;
+                    objectArray[i].hp -= this.effect;
                     i = objectArray.length;
                 }
             }
@@ -706,6 +714,7 @@ class ZapObject{
     sizeY = 10;
     pixelSpeed = 12;
     energizeBonus = 0;
+    effect = 4;
 
     
     constructor(team, positionX, positionY, objectArray){
@@ -760,7 +769,7 @@ class ZapObject{
             this.positionY + this.sizeY > otherObject.positionY) {
                 if(otherObject.hp && otherObject.team != this.team){
                     this.active = false;
-                    otherObject.hp -= (4 + this.energizeBonus);
+                    otherObject.hp -= (this.effect + this.energizeBonus);
                 }
             }
     }
@@ -783,6 +792,7 @@ class BoltObject{
     sizeY = 10;
     pixelSpeed = 7;
     energizeBonus = 0;
+    effect = 6;
 
     
     constructor(team, positionX, positionY, objectArray){
@@ -837,7 +847,7 @@ class BoltObject{
             this.positionY + this.sizeY > otherObject.positionY) {
                 if(otherObject.hp && otherObject.team != this.team && otherObject.className == "CannonObject"){
                     this.active = false;
-                    otherObject.hp -= (6 + this.energizeBonus);
+                    otherObject.hp -= (this.effect + this.energizeBonus);
                 }
             }
     }
@@ -859,6 +869,7 @@ class LightningObject{
     activeFrames = 5;
     DmgedFlag = false;
     energizeBonus = 0;
+    effect = 8;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -902,7 +913,7 @@ class LightningObject{
             for(var i = 0; i < objectArray.length && !this.DmgedFlag; i++){
                 if(this.positionX == objectArray[i].positionX &&
                     this.positionY == objectArray[i].positionY && objectArray[i].hp){
-                        objectArray[i].hp -= (8 + this.energizeBonus);
+                        objectArray[i].hp -= (this.effect + this.energizeBonus);
                         this.DmgedFlag = true;
                 }
             }
@@ -933,7 +944,7 @@ class ShockObject{
     sizeX = 20;
     sizeY = 20;
     pixelSpeed = 6;
-    activeFrames = 10;
+    effect = 10;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -983,8 +994,8 @@ class ShockObject{
         }
         else{
             
-            this.activeFrames--;
-            if(this.activeFrames <= 0){
+            this.effect--;
+            if(this.effect <= 0){
                 this.active = false;
 
                 for(var i = 0; i < objectArray.length && !this.DmgedFlag; i++){
@@ -1023,6 +1034,7 @@ class EnergizeObject{
     maxCharge = 25;
     positionX = 0;
     positionY = 0;
+    effect = 1;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -1039,7 +1051,7 @@ class EnergizeObject{
                 this.positionY < objectArray[i].positionY + objectArray[i].sizeY &&
                 this.positionY + this.sizeY > objectArray[i].positionY){
 
-                    objectArray[i].energizeBonus++;
+                    objectArray[i].energizeBonus+=this.effect;
             }
         }
         this.active = false;
@@ -1145,6 +1157,7 @@ class FreezeObject{
     sizeX = 10;
     sizeY = 10;
     pixelSpeed = 5;
+    effect = 2;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -1200,7 +1213,9 @@ class FreezeObject{
                 if(otherObject.hp && otherObject.team != this.team && otherObject.className == "CannonObject"){
                     this.active = false;
                     var curSpell = otherObject.currentSpell;
-                    otherObject.mateManning.equippedDice.possibleRolls = await [curSpell, curSpell, curSpell];
+                    var spells = [];
+                    for(var i = 0; i < this.effect; i++) spells.push(curSpell);
+                    otherObject.mateManning.equippedDice.possibleRolls = spells;
                 }
             }
     }
@@ -1226,6 +1241,7 @@ class HealObject{
     sizeX = 15;
     sizeY = 15;
     pixelSpeed = 3;
+    effect = 8;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -1286,7 +1302,7 @@ class HealObject{
                     !(otherObject.positionX == this.spawnX && otherObject.positionY == this.spawnY)){
                     
                     this.active = false;
-                    otherObject.hp += 8;
+                    otherObject.hp += this.effect;
                     if(otherObject.hp > otherObject.maxHp){
                         otherObject.hp = otherObject.maxHp;
                     }
@@ -1315,6 +1331,7 @@ class BreezeObject{
     sizeX = 15;
     sizeY = 15;
     pixelSpeed = 4;
+    effect = 8;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -1378,7 +1395,7 @@ class BreezeObject{
                     !(otherObject.positionX == this.spawnX && otherObject.positionY == this.spawnY)){
                     
                     this.active = false;
-                    otherObject.charge += 8;
+                    otherObject.charge += this.effect;
                 }
             }
     }
@@ -1400,6 +1417,7 @@ class TailwindObject{
     sizeX = 15;
     sizeY = 15;
     pixelSpeed = 3;
+    effect = 3;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -1458,7 +1476,88 @@ class TailwindObject{
             this.positionY + this.sizeY > otherObject.positionY) {
                 if(otherObject.hp && otherObject.team == this.team){
                     this.active = false;
-                    otherObject.pixelSpeedBonus += 3;
+                    otherObject.pixelSpeedBonus += this.effect;
+                }
+            }
+    }
+};
+
+class WooshObject{
+    className = "WooshObject";
+    iconName = "woosh";
+    school = "Gust";
+    team = "left";
+    active = true;
+    maxCharge = 15;
+    positionX = 0;
+    positionY = 0;
+    destX = 0;
+    destY = 0;
+    slope = 0;
+    offset = 0;
+    sizeX = 15;
+    sizeY = 15;
+    pixelSpeed = 2;
+    effect = 2;
+    
+
+    constructor(team, positionX, positionY, objectArray){
+        if(team == null){
+            this.active = false;
+            return;
+        }
+
+        var targets = [];
+        for(var i = 0; i < objectArray.length; i++){
+            if(objectArray[i].hp && objectArray[i].team == team &&
+                !(objectArray[i].positionX == positionX && objectArray[i].positionY == positionY)){
+                targets.push(objectArray[i]);
+            }
+        }
+
+        if(targets.length == []){
+            this.active = false;
+            return;
+        }
+
+        var target = targets[0];
+        for(var i = 1; i < targets.length; i++){
+            if((targets[i].hp / targets[i].maxHp) < (target.hp / target.maxHp)){
+                target = targets[i];
+            }
+        }
+
+        this.active = true;
+        this.team = team;
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.destX = target.positionX;
+        this.destY = target.positionY;
+
+        this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
+        this.offset = -((this.slope * this.positionX) - this.positionY);
+    }
+
+    async onFrame(ctx, objectArray){ 
+        await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
+
+        if(this.destX != this.positionX){
+            this.positionX += (this.destX > this.positionX) ? this.pixelSpeed : -this.pixelSpeed;
+            this.positionY = (this.slope * this.positionX) + this.offset;
+        }
+        else{
+            this.positionY += (this.destY > this.positionY) ? this.pixelSpeed : -this.pixelSpeed;
+        }
+    }
+
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
+        if (this.positionX < otherObject.positionX + otherObject.sizeX &&
+            this.positionX + this.sizeX > otherObject.positionX &&
+            this.positionY < otherObject.positionY + otherObject.sizeY &&
+            this.positionY + this.sizeY > otherObject.positionY) {
+                if(otherObject.hp && otherObject.team == this.team){
+                    this.active = false;
+                    otherObject.effectBonus += effect;
                 }
             }
     }
@@ -1482,6 +1581,7 @@ class MagicMissileObject{
     sizeX = 15;
     sizeY = 15;
     pixelSpeed = 9;
+    effect = 20;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -1536,7 +1636,7 @@ class MagicMissileObject{
             this.positionY + this.sizeY > otherObject.positionY) {
                 if(otherObject.hp && otherObject.team != this.team){
                     this.active = false;
-                    otherObject.hp -= 20;
+                    otherObject.hp -= this.effect;
                 }
             }
     }
@@ -1553,6 +1653,7 @@ class ArmageddonObject{
     positionY = 0;
     sizeX = 15;
     sizeY = 15;
+    effect = 10;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -1564,10 +1665,10 @@ class ArmageddonObject{
 
     async onFrame(ctx, objectArray){ 
         await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
-        this.positionX -= 5;
-        this.positionY -= 5;
-        this.sizeX += 10;
-        this.sizeY += 10;
+        this.positionX -= this.effect/2;
+        this.positionY -= this.effect/2;
+        this.sizeX += this.effect;
+        this.sizeY += this.effect;
     }
 
     async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
@@ -1598,6 +1699,7 @@ class TrueSmiteObject{
     sizeX = 15;
     sizeY = 15;
     pixelSpeed = 9;
+    effect = 10;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -1656,7 +1758,7 @@ class TrueSmiteObject{
                         otherObject.hp = 0;
                     }
                     else{
-                        otherObject.hp -= 10;
+                        otherObject.hp -= effect;
                     }
                 }
             }
@@ -1681,7 +1783,7 @@ class CleanseObject{
     sizeX = 15;
     sizeY = 15;
     pixelSpeed = 5;
-    activeFrames = 5;
+    effect = 5;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -1747,8 +1849,8 @@ class CleanseObject{
             }
         }
         else{
-            this.activeFrames--;
-            if(this.activeFrames <= 0){
+            this.effect--;
+            if(this.effect <= 0){
                 this.active = false;
             }
         }
@@ -1773,6 +1875,6 @@ module.exports = {
     ZapObject, BoltObject, LightningObject, ShockObject, EnergizeObject,
     SnowballObject, FreezeObject,
     HealObject,
-    BreezeObject, TailwindObject,
+    BreezeObject, TailwindObject, WooshObject,
     MagicMissileObject, ArmageddonObject, TrueSmiteObject, CleanseObject
 };
