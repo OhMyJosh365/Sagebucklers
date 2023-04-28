@@ -1353,7 +1353,7 @@ class RainstormObject{
 
     async onFrame(ctx, objectArray){
         await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
-        if(this.slope != 0 && this.offset){
+        if(this.slope != 0 && this.offset != 0){
             this.positionX += (this.team == "left") ? this.pixelSpeed : -this.pixelSpeed;
             this.positionY = (this.slope * this.positionX) + this.offset;
         }
