@@ -1666,10 +1666,8 @@ class FrostbiteObject{
                     this.energizeBonus = otherObject.energizeBonus;
                 }
                 else if(this.slope == 0 && this.offset == 0 && otherObject.className == "CannonObject"){
-                    console.log(otherObject.hp + " " + this.heldHp)
                     if(otherObject.hp > this.heldHp) otherObject.hp = this.heldHp;
                     if(otherObject.hp < this.heldHp) this.heldHp = otherObject.hp;
-                    console.log(otherObject.hp)
 
                     if(otherObject.pixelSpeedBonus > this.pixelSpeedBonus) otherObject.pixelSpeedBonus = this.pixelSpeedBonus;
                     if(otherObject.pixelSpeedBonus < this.pixelSpeedBonus) this.pixelSpeedBonus = otherObject.pixelSpeedBonus;
