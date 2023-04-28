@@ -2078,10 +2078,11 @@ class TornadoObject{
     destY = 0;
     slope = 0;
     offset = 0;
-    sizeX = 15;
-    sizeY = 15;
+    sizeX = 20;
+    sizeY = 20;
     pixelSpeed = 5;
-    effect = 1;
+    totalDmg = 3;
+    effect = 3;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -2136,10 +2137,10 @@ class TornadoObject{
             this.positionY + this.sizeY > otherObject.positionY) {
                 if(otherObject.hp && otherObject.team != this.team){
                     this.active = false;
-                    otherObject.hp -= this.effect;
+                    otherObject.hp -= this.totalDmg;
                 }
                 else if(otherObject.pixelSpeed && otherObject.team != this.team){
-                    this.effect++;
+                    this.totalDmg += this.effect;
                     otherObject.active = false;
                 }
             }
@@ -2540,6 +2541,6 @@ module.exports = {
     TidalWaveObject, SplashObject, RiptideObject, RainstormObject, WhirlpoolObject,
     SnowballObject, FreezeObject, HailObject,
     HealObject,
-    BreezeObject, TailwindObject, WooshObject,
+    BreezeObject, TailwindObject, TornadoObject, WooshObject,
     MagicMissileObject, ArmageddonObject, TrueSmiteObject, CleanseObject
 };

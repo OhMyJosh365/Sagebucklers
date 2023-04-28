@@ -4,7 +4,8 @@ class DiceObject{
         "Splash",
         "Riptide",
         "Rainstorm",
-        "Whirlpool"
+        "Whirlpool",
+        "Tornado"
     ];
 
     possibleRolls = [];
