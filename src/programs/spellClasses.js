@@ -1215,6 +1215,182 @@ class SplashObject{
     }
 };
 
+class RiptideObject{
+    className = "RiptideObject";
+    iconName = "riptide";
+    school = "Sea";
+    team = "left";
+    active = true;
+    maxCharge = 24;
+    positionX = 0;
+    positionY = 0;
+    destX = 0;
+    destY = 0;
+    slope = 0;
+    offset = 0;
+    sizeX = 15;
+    sizeY = 15;
+    pixelSpeed = 2;
+    effect = 5;
+    
+
+    constructor(team, positionX, positionY, objectArray){
+        if(team == null){
+            this.active = false;
+            return;
+        }
+
+        var targets = [];
+        for(var i = 0; i < objectArray.length; i++){
+            if(objectArray[i].hp && objectArray[i].team != team){
+                targets.push(objectArray[i]);
+            }
+        }
+
+        if(targets.length == []){
+            this.active = false;
+            return;
+        }
+
+        var target = targets[0];
+        for(var i = 1; i < targets.length; i++){
+            if(Math.sqrt(Math.pow((positionX - targets[i].positionX), 2) + 
+                Math.pow((positionY - targets[i].positionY), 2)) <
+                Math.sqrt(Math.pow((positionX - target.positionX), 2) + 
+                Math.pow((positionY - target.positionY), 2))){
+                    target = targets[i];
+            }
+        }
+
+        this.active = true;
+        this.team = team;
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.destX = target.positionX;
+        this.destY = target.positionY;
+
+        this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
+        this.offset = -((this.slope * this.positionX) - this.positionY);
+    }
+
+    async onFrame(ctx, objectArray){ 
+        await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
+        this.positionX += (this.team == "left") ? this.pixelSpeed : -this.pixelSpeed;
+        this.positionY = (this.slope * this.positionX) + this.offset;
+    }
+
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
+        if (this.positionX < otherObject.positionX + otherObject.sizeX &&
+            this.positionX + this.sizeX > otherObject.positionX &&
+            this.positionY < otherObject.positionY + otherObject.sizeY &&
+            this.positionY + this.sizeY > otherObject.positionY) {
+                if(otherObject.hp && otherObject.team != this.team){
+                    otherObject.weight += this.effect;
+                    this.active = false;
+                }
+            }
+    }
+};
+
+class RainstormObject{
+    className = "RainstormObject";
+    iconName = "rainstorm";
+    school = "Sea";
+    team = "left";
+    active = true;
+    maxCharge = 25;
+    positionX = 0;
+    positionY = 0;
+    destX = 0;
+    destY = 0;
+    slope = 0;
+    offset = 0;
+    sizeX = 20;
+    sizeY = 20;
+    pixelSpeed = 6;
+    activeFrames = 20;
+    effect = 2;
+    
+
+    constructor(team, positionX, positionY, objectArray){
+        if(team == null){
+            this.active = false;
+            return;
+        }
+
+        var targets = [];
+        for(var i = 0; i < objectArray.length; i++){
+            if(objectArray[i].hp && objectArray[i].team != team){
+                targets.push(objectArray[i]);
+            }
+        }
+
+        if(targets.length == []){
+            this.active = false;
+            return;
+        }
+
+        var target = targets[0];
+        for(var i = 1; i < targets.length; i++){
+            if(Math.sqrt(Math.pow((positionX - targets[i].positionX), 2) + 
+                Math.pow((positionY - targets[i].positionY), 2)) <
+                Math.sqrt(Math.pow((positionX - target.positionX), 2) + 
+                Math.pow((positionY - target.positionY), 2))){
+                    target = targets[i];
+            }
+        }
+
+        this.active = true;
+        this.team = team;
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.destX = target.positionX;
+        this.destY = target.positionY;
+
+        this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
+        this.offset = -((this.slope * this.positionX) - this.positionY);
+    }
+
+    async onFrame(ctx, objectArray){
+        await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
+        if(this.slope != 0 && this.offset){
+            this.positionX += (this.team == "left") ? this.pixelSpeed : -this.pixelSpeed;
+            this.positionY = (this.slope * this.positionX) + this.offset;
+        }
+        else{
+            this.activeFrames--;
+            if(this.activeFrames <= 0){
+                this.active = false;
+            }
+        }
+    }
+
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
+        if (this.positionX < otherObject.positionX + otherObject.sizeX &&
+            this.positionX + this.sizeX > otherObject.positionX &&
+            this.positionY < otherObject.positionY + otherObject.sizeY &&
+            this.positionY + this.sizeY > otherObject.positionY) {
+                if(otherObject.hp && otherObject.team != this.team){
+                    this.slope = 0;
+                    this.offset = 0;
+                }
+                if(otherObject.slope && this.slope == 0 && otherObject.team == this.team && thisArrayIndex != otherArrayIndex){
+                    for(var i = 0; i < objectArray.length; i++){
+                        if(
+                            this.positionX < objectArray[i].positionX + objectArray[i].sizeX &&
+                            this.positionX + this.sizeX > objectArray[i].positionX &&
+                            this.positionY < objectArray[i].positionY + objectArray[i].sizeY &&
+                            this.positionY + this.sizeY > objectArray[i].positionY &&
+                            objectArray[i].className == "CannonObject"
+                        ){
+                            objectArray[i].weight += this.effect;
+                        }
+                    }
+                }
+            }
+    }
+};
+
 
 //Frost Magic
 class SnowballObject{
@@ -2175,7 +2351,7 @@ module.exports = {
     WaitObject, PrepareObject, RestObject, SparkObject, CounterObject,
     FireballObject, BurnObject, ExplosionObject, ScorchObject, HearthObject,
     ZapObject, BoltObject, LightningObject, ShockObject, EnergizeObject,
-    TidalWaveObject, SplashObject,
+    TidalWaveObject, SplashObject, RiptideObject,
     SnowballObject, FreezeObject, HailObject,
     HealObject,
     BreezeObject, TailwindObject, WooshObject,

@@ -2,9 +2,7 @@ class DiceObject{
     
     spellFaces = [
         "Splash",
-        "TidalWave",
-        "Tailwind",
-        "Woosh"
+        "Riptide"
     ];
 
     possibleRolls = [];
