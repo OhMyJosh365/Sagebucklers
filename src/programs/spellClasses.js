@@ -1577,6 +1577,113 @@ class SnowballObject{
     }
 };
 
+class FrostbiteObject{
+    className = "FrostbiteObject";
+    iconName = "frostbite";
+    school = "Frost";
+    team = "left";
+    active = true;
+    maxCharge = 25;
+    positionX = 0;
+    positionY = 0;
+    destX = 0;
+    destY = 0;
+    slope = 0;
+    offset = 0;
+    sizeX = 15;
+    sizeY = 15;
+    pixelSpeed = 8;
+    effect = 20;
+    heldHp = 0;
+    pixelSpeedBonus = 0;
+    effectBonus = 0;
+    energizeBonus = 0;
+
+    constructor(team, positionX, positionY, objectArray){
+        if(team == null){
+            this.active = false;
+            return;
+        }
+
+        var targets = [];
+        for(var i = 0; i < objectArray.length; i++){
+            if(objectArray[i].hp && objectArray[i].team != team){
+                targets.push(objectArray[i]);
+            }
+        }
+
+        if(targets.length == []){
+            this.active = false;
+            return;
+        }
+
+        var target = targets[0];
+        for(var i = 1; i < targets.length; i++){
+            if(Math.sqrt(Math.pow((positionX - targets[i].positionX), 2) + 
+                Math.pow((positionY - targets[i].positionY), 2)) <
+                Math.sqrt(Math.pow((positionX - target.positionX), 2) + 
+                Math.pow((positionY - target.positionY), 2))){
+                    target = targets[i];
+            }
+        }
+
+        this.active = true;
+        this.team = team;
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.destX = target.positionX;
+        this.destY = target.positionY;
+
+        this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
+        this.offset = -((this.slope * this.positionX) - this.positionY);
+    }
+
+    async onFrame(ctx, objectArray){
+        await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
+        if(this.slope != 0 && this.offset){
+            this.positionX += (this.team == "left") ? this.pixelSpeed : -this.pixelSpeed;
+            this.positionY = (this.slope * this.positionX) + this.offset;
+        }
+        else{
+            this.effect--;
+            if(this.effect <= 0){
+                this.active = false;
+            }
+        }
+    }
+
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
+        if (this.positionX < otherObject.positionX + otherObject.sizeX &&
+            this.positionX + this.sizeX > otherObject.positionX &&
+            this.positionY < otherObject.positionY + otherObject.sizeY &&
+            this.positionY + this.sizeY > otherObject.positionY) {
+                if(this.slope != 0 && this.offset != 0 && otherObject.hp && otherObject.team != this.team){
+                    this.slope = 0;
+                    this.offset = 0;
+                    this.heldHp = otherObject.hp;
+                    this.pixelSpeedBonus = otherObject.pixelSpeedBonus;
+                    this.effectBonus = otherObject.effectBonus;
+                    this.energizeBonus = otherObject.energizeBonus;
+                }
+                else if(this.slope == 0 && this.offset == 0 && otherObject.className == "CannonObject"){
+                    console.log(otherObject.hp + " " + this.heldHp)
+                    if(otherObject.hp > this.heldHp) otherObject.hp = this.heldHp;
+                    if(otherObject.hp < this.heldHp) this.heldHp = otherObject.hp;
+                    console.log(otherObject.hp)
+
+                    if(otherObject.pixelSpeedBonus > this.pixelSpeedBonus) otherObject.pixelSpeedBonus = this.pixelSpeedBonus;
+                    if(otherObject.pixelSpeedBonus < this.pixelSpeedBonus) this.pixelSpeedBonus = otherObject.pixelSpeedBonus;
+
+                    if(otherObject.effectBonus > this.effectBonus) otherObject.effectBonus = this.effectBonus;
+                    if(otherObject.effectBonus < this.effectBonus) this.effectBonus = otherObject.effectBonus;
+
+                    if(otherObject.energizeBonus > this.energizeBonus) otherObject.energizeBonus = this.energizeBonus;
+                    if(otherObject.energizeBonus < this.energizeBonus) this.energizeBonus = otherObject.energizeBonus;
+                }
+            }
+    }
+};
+
 class FreezeObject{
     className = "FreezeObject";
     iconName = "freeze";
@@ -2539,7 +2646,7 @@ module.exports = {
     FireballObject, BurnObject, ExplosionObject, ScorchObject, HearthObject,
     ZapObject, BoltObject, LightningObject, ShockObject, EnergizeObject,
     TidalWaveObject, SplashObject, RiptideObject, RainstormObject, WhirlpoolObject,
-    SnowballObject, FreezeObject, HailObject,
+    SnowballObject, FrostbiteObject, FreezeObject, HailObject,
     HealObject,
     BreezeObject, TailwindObject, TornadoObject, WooshObject,
     MagicMissileObject, ArmageddonObject, TrueSmiteObject, CleanseObject

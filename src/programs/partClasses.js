@@ -38,6 +38,7 @@ class CannonObject{
     chargeRate = 1;
     energizeBonus = 0;
     pixelSpeedBonus = 0;
+    effectBonus = 0;
     weight = 0;
     currentSpell = null;
     
@@ -101,6 +102,9 @@ class CannonObject{
 
         spell.pixelSpeed += this.pixelSpeedBonus;
         this.pixelSpeedBonus = 0;
+
+        spell.effect += this.effectBonus;
+        this.effectBonus = 0;
         
         await objectArray.push(spell);
     }
