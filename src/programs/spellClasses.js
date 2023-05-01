@@ -2163,7 +2163,6 @@ class BarrierObject{
     async onFrame(ctx, objectArray){
 
         await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
-        await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
 
         if(this.slope != 0 && this.offset != 0){
             if(this.destX != this.positionX){
@@ -2173,6 +2172,12 @@ class BarrierObject{
             else{
                 this.positionY += (this.destY > this.positionY) ? this.pixelSpeed : -this.pixelSpeed;
             }
+        }
+        else{
+            ctx.beginPath();
+            ctx.rect(this.positionX, this.positionY + this.sizeY + 1, (this.hp/this.maxHp)*this.sizeX, 5);
+            ctx.fillStyle = "#44D62C";
+            ctx.fill();
         }
 
         if(this.hp <= 0){
@@ -2190,10 +2195,10 @@ class BarrierObject{
                     if(!(otherObject.positionX == this.spawnX && otherObject.positionY == this.spawnY)){
                         this.slope = 0;
                         this.offset = 0;
-                        this.positionX = otherObject.positionX - 20;
-                        this.positionY = otherObject.positionY - 20;
-                        this.sizeX = otherObject.sizeX + 40;
-                        this.sizeY = otherObject.sizeY + 40;
+                        this.positionX = otherObject.positionX - 15;
+                        this.positionY = otherObject.positionY - 15;
+                        this.sizeX = otherObject.sizeX + 30;
+                        this.sizeY = otherObject.sizeY + 30;
                     }
                 }
                 if(otherObject.slope && this.slope == 0 && otherObject.team == this.team && thisArrayIndex != otherArrayIndex){
