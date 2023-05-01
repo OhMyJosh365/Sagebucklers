@@ -2118,8 +2118,8 @@ class BarrierObject{
     offset = 0;
     sizeX = 5;
     sizeY = 5;
-    pixelSpeed = 12;
-    hp = 15;
+    pixelSpeed = 3;
+    hp = 20;
     effect = 2;
     
 
@@ -2173,12 +2173,6 @@ class BarrierObject{
                 this.positionY += (this.destY > this.positionY) ? this.pixelSpeed : -this.pixelSpeed;
             }
         }
-        else{
-            ctx.beginPath();
-            ctx.rect(this.positionX, this.positionY + this.sizeY + 1, (this.hp/this.maxHp)*this.sizeX, 5);
-            ctx.fillStyle = "#44D62C";
-            ctx.fill();
-        }
 
         if(this.hp <= 0){
             this.active = false;
@@ -2192,7 +2186,7 @@ class BarrierObject{
             this.positionY < otherObject.positionY + otherObject.sizeY &&
             this.positionY + this.sizeY > otherObject.positionY) {
                 if(otherObject.hp && otherObject.team == this.team){
-                    if(!(otherObject.positionX == this.spawnX && otherObject.positionY == this.spawnY)){
+                    if(this.destX == otherObject.positionX && this.destY == otherObject.positionY){
                         this.slope = 0;
                         this.offset = 0;
                         this.positionX = otherObject.positionX - 15;
@@ -2201,7 +2195,7 @@ class BarrierObject{
                         this.sizeY = otherObject.sizeY + 30;
                     }
                 }
-                if(otherObject.slope && this.slope == 0 && otherObject.team == this.team && thisArrayIndex != otherArrayIndex){
+                if(otherObject.slope && this.slope == 0 && otherObject.team != this.team && thisArrayIndex != otherArrayIndex){
                     otherObject.active = false;
                 }
             }
