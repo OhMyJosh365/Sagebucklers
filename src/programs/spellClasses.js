@@ -2726,7 +2726,7 @@ class FogObject{
                 this.positionY < otherObject.positionY + otherObject.sizeY &&
                 this.positionY + this.sizeY > otherObject.positionY) {
                     if(otherObject.team != this.team){
-                        var chance = rand() % 20;
+                        let chance = await Math.floor(Math.random() * 20)+1;
                         if(chance <= this.effect){
                             otherObject.team  = (otherObject.team == "left") ? "right" : "left";
                         }
@@ -3151,6 +3151,6 @@ module.exports = {
     TidalWaveObject, SplashObject, RiptideObject, RainstormObject, WhirlpoolObject,
     SnowballObject, FrostbiteObject, IcewallObject, FreezeObject, HailObject,
     HealObject, BarrierObject, SurgeObject, AuraObject,
-    BreezeObject, TailwindObject, TornadoObject, WooshObject,
+    BreezeObject, TailwindObject, TornadoObject, FogObject, WooshObject,
     MagicMissileObject, ArmageddonObject, MagicArmorObject, TrueSmiteObject, CleanseObject
 };
