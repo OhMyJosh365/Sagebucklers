@@ -1682,6 +1682,108 @@ class FrostbiteObject{
     }
 };
 
+class IcewallObject{
+    className = "IcewallObject";
+    iconName = "icewall";
+    school = "Frost";
+    team = "left";
+    active = true;
+    maxCharge = 25;
+    positionX = 0;
+    positionY = 0;
+    destX = 0;
+    destY = 0;
+    slope = 0;
+    offset = 0;
+    sizeX = 5;
+    sizeY = 5;
+    pixelSpeed = 12;
+    activeFrames = 20;
+    effect = 2;
+    
+
+    constructor(team, positionX, positionY, objectArray){
+        if(team == null){
+            this.active = false;
+            return;
+        }
+
+        var targets = [];
+        for(var i = 0; i < objectArray.length; i++){
+            if(objectArray[i].hp && objectArray[i].team != team){
+                targets.push(objectArray[i]);
+            }
+        }
+
+        if(targets.length == []){
+            this.active = false;
+            return;
+        }
+
+        var target = targets[0];
+        for(var i = 1; i < targets.length; i++){
+            if(Math.sqrt(Math.pow((positionX - targets[i].positionX), 2) + 
+                Math.pow((positionY - targets[i].positionY), 2)) <
+                Math.sqrt(Math.pow((positionX - target.positionX), 2) + 
+                Math.pow((positionY - target.positionY), 2))){
+                    target = targets[i];
+            }
+        }
+
+        this.active = true;
+        this.team = team;
+        this.positionX = positionX;
+        this.positionY = positionY;
+        this.destX = target.positionX;
+        this.destY = target.positionY;
+
+        this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
+        this.offset = -((this.slope * this.positionX) - this.positionY);
+    }
+
+    async onFrame(ctx, objectArray){
+
+        await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
+        if(this.slope != 0 && this.offset != 0){
+            this.positionX += (this.team == "left") ? this.pixelSpeed : -this.pixelSpeed;
+            this.positionY = (this.slope * this.positionX) + this.offset;
+
+            if(
+                (this.team == "left" && this.positionX >= 90) ||
+                (this.team == "right" && this.positionX <= 140)
+            ){
+                this.positionX = (this.team == "left" ? 90 : 140);
+                this.positionY -= 10;
+                this.sizeX = 20;
+                this.sizeY = 35;
+                this.slope = 0;
+                this.offset = 0;
+            }
+        }
+        else{
+            this.activeFrames--;
+            if(this.activeFrames <= 0){
+                this.active = false;
+            }
+        }
+        
+    }
+
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
+        if(this.slope == 0 && this.offset == 0){
+            if (this.positionX < otherObject.positionX + otherObject.sizeX &&
+                this.positionX + this.sizeX > otherObject.positionX &&
+                this.positionY < otherObject.positionY + otherObject.sizeY &&
+                this.positionY + this.sizeY > otherObject.positionY) {
+                    if(otherObject.pixelSpeed && otherObject.team != this.team){
+                        otherObject.active = false;
+                        this.activeFrames -= 5;
+                    }
+                }
+        }
+    }
+};
+
 class FreezeObject{
     className = "FreezeObject";
     iconName = "freeze";
@@ -2644,7 +2746,7 @@ module.exports = {
     FireballObject, BurnObject, ExplosionObject, ScorchObject, HearthObject,
     ZapObject, BoltObject, LightningObject, ShockObject, EnergizeObject,
     TidalWaveObject, SplashObject, RiptideObject, RainstormObject, WhirlpoolObject,
-    SnowballObject, FrostbiteObject, FreezeObject, HailObject,
+    SnowballObject, FrostbiteObject, IcewallObject, FreezeObject, HailObject,
     HealObject,
     BreezeObject, TailwindObject, TornadoObject, WooshObject,
     MagicMissileObject, ArmageddonObject, TrueSmiteObject, CleanseObject
