@@ -2119,7 +2119,7 @@ class BarrierObject{
     sizeX = 5;
     sizeY = 5;
     pixelSpeed = 3;
-    hp = 20;
+    hp = 18;
     effect = 2;
     
 
@@ -2158,6 +2158,7 @@ class BarrierObject{
 
         this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
         this.offset = -((this.slope * this.positionX) - this.positionY);
+        this.hp += this.effect;
     }
 
     async onFrame(ctx, objectArray){
@@ -2247,6 +2248,54 @@ class SurgeObject{
                 }
             }
     }
+};
+
+class AuraObject{
+    className = "AuraObject";
+    iconName = "aura";
+    school = "Conjure";
+    team = "left";
+    active = true;
+    maxCharge = 30;
+    positionX = 0;
+    positionY = 0;
+    sizeX = 45;
+    sizeY = 45;
+    effect = 8;
+    activeFrames = 5;
+    firstFrameFlag = true;
+    
+
+    constructor(team, positionX, positionY, objectArray){
+        this.active = true;
+        this.team = team;
+        this.positionX = positionX - 15;
+        this.positionY = positionY - 15;
+    }
+
+    async onFrame(ctx, objectArray){ 
+        await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
+
+        if(this.firstFrameFlag){
+            for(var i = 0; i < objectArray.length; i++){
+                if(objectArray[i].hp && objectArray[i].team == this.team){
+
+                    objectArray[i].hp += this.effect;
+                    if(objectArray[i].hp > objectArray[i].maxHp){
+                        objectArray[i].hp = objectArray[i].maxHp;
+                    }
+                }
+            }
+            this.firstFrameFlag = false;
+        }
+
+        this.activeFrames--;
+        if(this.activeFrames <= 0){
+            this.active = false;
+        }
+    }
+
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){}
 };
 
 
@@ -2703,6 +2752,107 @@ class ArmageddonObject{
     }
 };
 
+class MagicArmorObject{
+    className = "MagicArmorObject";
+    iconName = "magicarmor";
+    school = "Pure";
+    team = "left";
+    active = true;
+    maxCharge = 40;
+    spawnX = 0;
+    spawnY = 0;
+    positionX = 0;
+    positionY = 0;
+    destX = 0;
+    destY = 0;
+    slope = 0;
+    offset = 0;
+    sizeX = 5;
+    sizeY = 5;
+    pixelSpeed = 3;
+    effect = 20;
+    
+
+    constructor(team, positionX, positionY, objectArray){
+        if(team == null){
+            this.active = false;
+            return;
+        }
+
+        var targets = [];
+        for(var i = 0; i < objectArray.length; i++){
+            if(objectArray[i].hp && objectArray[i].team == team &&
+                !(objectArray[i].positionX == positionX && objectArray[i].positionY == positionY)){
+                targets.push(objectArray[i]);
+            }
+        }
+
+        if(targets.length == []){
+            this.active = false;
+            return;
+        }
+
+        var target = targets[0];
+        for(var i = 1; i < targets.length; i++){
+            if((targets[i].hp / targets[i].maxHp) < (target.hp / target.maxHp)){
+                target = targets[i];
+            }
+        }
+
+        this.active = true;
+        this.team = team;
+        this.positionX = this.spawnX = positionX;
+        this.positionY = this.spawnY = positionY;
+        this.destX = target.positionX;
+        this.destY = target.positionY;
+
+        this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
+        this.offset = -((this.slope * this.positionX) - this.positionY);
+    }
+
+    async onFrame(ctx, objectArray){
+
+        await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
+
+        if(this.slope != 0 && this.offset != 0){
+            if(this.destX != this.positionX){
+                this.positionX += (this.destX > this.positionX) ? this.pixelSpeed : -this.pixelSpeed;
+                this.positionY = (this.slope * this.positionX) + this.offset;
+            }
+            else{
+                this.positionY += (this.destY > this.positionY) ? this.pixelSpeed : -this.pixelSpeed;
+            }
+        }
+
+        this.effect--;
+        if(this.effect <= 0){
+            this.active = false;
+        }
+        
+    }
+
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
+        if (this.positionX < otherObject.positionX + otherObject.sizeX &&
+            this.positionX + this.sizeX > otherObject.positionX &&
+            this.positionY < otherObject.positionY + otherObject.sizeY &&
+            this.positionY + this.sizeY > otherObject.positionY) {
+                if(otherObject.hp && otherObject.team == this.team){
+                    if(this.destX == otherObject.positionX && this.destY == otherObject.positionY){
+                        this.slope = 0;
+                        this.offset = 0;
+                        this.positionX = otherObject.positionX - 15;
+                        this.positionY = otherObject.positionY - 15;
+                        this.sizeX = otherObject.sizeX + 30;
+                        this.sizeY = otherObject.sizeY + 30;
+                    }
+                }
+                if(otherObject.slope && this.slope == 0 && otherObject.team != this.team && thisArrayIndex != otherArrayIndex){
+                    otherObject.active = false;
+                }
+            }
+    }
+};
+
 class TrueSmiteObject{
     className = "TrueSmiteObject";
     iconName = "truesmite";
@@ -2895,7 +3045,7 @@ module.exports = {
     ZapObject, BoltObject, LightningObject, ShockObject, EnergizeObject,
     TidalWaveObject, SplashObject, RiptideObject, RainstormObject, WhirlpoolObject,
     SnowballObject, FrostbiteObject, IcewallObject, FreezeObject, HailObject,
-    HealObject, BarrierObject, SurgeObject,
+    HealObject, BarrierObject, SurgeObject, AuraObject,
     BreezeObject, TailwindObject, TornadoObject, WooshObject,
-    MagicMissileObject, ArmageddonObject, TrueSmiteObject, CleanseObject
+    MagicMissileObject, ArmageddonObject, MagicArmorObject, TrueSmiteObject, CleanseObject
 };
