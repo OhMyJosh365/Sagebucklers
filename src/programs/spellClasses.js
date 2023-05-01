@@ -2119,7 +2119,6 @@ class AbsorbObject{
     pixelSpeed = 8;
     activeFrames = 20;
     effect = 2;
-    heldHp = 0;
     
 
     constructor(team, positionX, positionY, objectArray){
@@ -2184,27 +2183,30 @@ class AbsorbObject{
             this.positionX + this.sizeX > otherObject.positionX &&
             this.positionY < otherObject.positionY + otherObject.sizeY &&
             this.positionY + this.sizeY > otherObject.positionY) {
-                if(otherObject.hp && otherObject.team != this.team){
+                if(otherObject.hp && otherObject.team == this.team){
                     this.slope = 0;
                     this.offset = 0;
-                    this.positionX = otherObject.positionX;
-                    this.positionY = otherObject.positionY;
-                    this.heldHp = otherObject.hp;
+                    this.positionX = otherObject.positionX - 15;
+                    this.positionY = otherObject.positionY - 15;
+                    this.sizeX = otherObject.sizeX + 30;
+                    this.sizeY = otherObject.sizeY + 30;
                 }
-                if(otherObject.slope && this.slope == 0 && thisArrayIndex != otherArrayIndex){
+                if(otherObject.hp && this.slope == 0 && thisArrayIndex != otherArrayIndex){
                     if(this.positionX == otherObject.positionX && this.positionY == otherObject.positionY){
 
-                        if(this.heldHp > otherObject.hp){
-                            this.active = false;
+                        otherObject.hp++;
+                        if(otherObject.hp > otherObject.maxHp){
+                            otherObject.hp = otherObject.maxHp;
                         }
-                        else{
-                            otherObject.hp += this.effect;
-                            if(otherObject.hp > otherObject.maxHp){
-                                otherObject.hp = otherObject.maxHp;
-                            }
-                            this.heldHp = otherObject.hp;
-                        }
+                        
                     }
+                }
+                if(otherObject.slope && this.slope == 0 && this.offset == 0){
+                    otherObject.effect -= this.effect;
+                    if(otherObject.effect < 1){
+                        otherObject.effect = 1;
+                    }
+                    this.active = false;
                 }
             }
     }
@@ -3259,7 +3261,7 @@ module.exports = {
     ZapObject, BoltObject, LightningObject, ShockObject, EnergizeObject,
     TidalWaveObject, SplashObject, RiptideObject, RainstormObject, WhirlpoolObject,
     SnowballObject, FrostbiteObject, IcewallObject, FreezeObject, HailObject,
-    HealObject, BarrierObject, SurgeObject, AuraObject,
+    HealObject, AbsorbObject, BarrierObject, SurgeObject, AuraObject,
     BreezeObject, TailwindObject, TornadoObject, FogObject, WooshObject,
     MagicMissileObject, ArmageddonObject, MagicArmorObject, TrueSmiteObject, CleanseObject
 };
