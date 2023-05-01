@@ -2202,6 +2202,53 @@ class BarrierObject{
     }
 };
 
+class SurgeObject{
+    className = "SurgeObject";
+    iconName = "surge";
+    school = "Conjure";
+    team = "left";
+    active = true;
+    maxCharge = 100;
+    positionX = 0;
+    positionY = 0;
+    sizeX = 15;
+    sizeY = 15;
+    effect = 10;
+    activeFrames = 15;
+    
+
+    constructor(team, positionX, positionY, objectArray){
+        this.active = true;
+        this.team = team;
+        this.positionX = positionX;
+        this.positionY = positionY;
+    }
+
+    async onFrame(ctx, objectArray){ 
+        await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
+        this.positionX -= this.effect/2;
+        this.positionY -= this.effect/2;
+        this.sizeX += this.effect;
+        this.sizeY += this.effect;
+        
+        this.activeFrames--;
+        if(this.activeFrames <= 0){
+            this.active = false;
+        }
+    }
+
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
+        if (this.positionX < otherObject.positionX + otherObject.sizeX &&
+            this.positionX + this.sizeX > otherObject.positionX &&
+            this.positionY < otherObject.positionY + otherObject.sizeY &&
+            this.positionY + this.sizeY > otherObject.positionY) {
+                if(otherObject.team != this.team && otherObject.pixelSpeed){
+                    otherObject.active = false;
+                }
+            }
+    }
+};
+
 
 //Gust Magic
 class BreezeObject{
