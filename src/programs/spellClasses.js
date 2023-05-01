@@ -2208,12 +2208,12 @@ class SurgeObject{
     school = "Conjure";
     team = "left";
     active = true;
-    maxCharge = 100;
+    maxCharge = 30;
     positionX = 0;
     positionY = 0;
     sizeX = 15;
     sizeY = 15;
-    effect = 10;
+    effect = 8;
     activeFrames = 15;
     
 
@@ -2230,7 +2230,7 @@ class SurgeObject{
         this.positionY -= this.effect/2;
         this.sizeX += this.effect;
         this.sizeY += this.effect;
-        
+
         this.activeFrames--;
         if(this.activeFrames <= 0){
             this.active = false;
@@ -2895,7 +2895,7 @@ module.exports = {
     ZapObject, BoltObject, LightningObject, ShockObject, EnergizeObject,
     TidalWaveObject, SplashObject, RiptideObject, RainstormObject, WhirlpoolObject,
     SnowballObject, FrostbiteObject, IcewallObject, FreezeObject, HailObject,
-    HealObject, BarrierObject,
+    HealObject, BarrierObject, SurgeObject,
     BreezeObject, TailwindObject, TornadoObject, WooshObject,
     MagicMissileObject, ArmageddonObject, TrueSmiteObject, CleanseObject
 };
