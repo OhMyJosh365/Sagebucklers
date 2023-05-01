@@ -2101,6 +2101,115 @@ class HealObject{
     }
 };
 
+class AbsorbObject{
+    className = "AbsorbObject";
+    iconName = "absorb";
+    school = "Conjure";
+    team = "left";
+    active = true;
+    maxCharge = 25;
+    positionX = 0;
+    positionY = 0;
+    destX = 0;
+    destY = 0;
+    slope = 0;
+    offset = 0;
+    sizeX = 15;
+    sizeY = 15;
+    pixelSpeed = 8;
+    activeFrames = 20;
+    effect = 2;
+    heldHp = 0;
+    
+
+    constructor(team, positionX, positionY, objectArray){
+        if(team == null){
+            this.active = false;
+            return;
+        }
+
+        var targets = [];
+        for(var i = 0; i < objectArray.length; i++){
+            if(objectArray[i].hp && objectArray[i].team == team &&
+                !(objectArray[i].positionX == positionX && objectArray[i].positionY == positionY)){
+                targets.push(objectArray[i]);
+            }
+        }
+
+        if(targets.length == []){
+            this.active = false;
+            return;
+        }
+
+        var target = targets[0];
+        for(var i = 1; i < targets.length; i++){
+            if((targets[i].hp / targets[i].maxHp) < (target.hp / target.maxHp)){
+                target = targets[i];
+            }
+        }
+
+        this.active = true;
+        this.team = team;
+        this.positionX = this.spawnX = positionX;
+        this.positionY = this.spawnY = positionY;
+        this.destX = target.positionX;
+        this.destY = target.positionY;
+
+        this.slope = (this.destY - this.positionY) / (this.destX - this.positionX);
+        this.offset = -((this.slope * this.positionX) - this.positionY);
+    }
+
+    async onFrame(ctx, objectArray){ 
+        await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
+
+        if(this.slope != 0 && this.offset != 0){
+            if(this.destX != this.positionX){
+                this.positionX += (this.destX > this.positionX) ? this.pixelSpeed : -this.pixelSpeed;
+                this.positionY = (this.slope * this.positionX) + this.offset;
+            }
+            else{
+                this.positionY += (this.destY > this.positionY) ? this.pixelSpeed : -this.pixelSpeed;
+            }
+        }
+        else{
+            this.activeFrames--;
+            if(this.activeFrames <= 0){
+                this.active = false;
+            }
+        }
+    }
+
+    async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
+        if (this.positionX < otherObject.positionX + otherObject.sizeX &&
+            this.positionX + this.sizeX > otherObject.positionX &&
+            this.positionY < otherObject.positionY + otherObject.sizeY &&
+            this.positionY + this.sizeY > otherObject.positionY) {
+                if(otherObject.hp && otherObject.team != this.team){
+                    this.slope = 0;
+                    this.offset = 0;
+                    this.positionX = otherObject.positionX;
+                    this.positionY = otherObject.positionY;
+                    this.heldHp = otherObject.hp;
+                }
+                if(otherObject.slope && this.slope == 0 && thisArrayIndex != otherArrayIndex){
+                    if(this.positionX == otherObject.positionX && this.positionY == otherObject.positionY){
+
+                        if(this.heldHp > otherObject.hp){
+                            this.active = false;
+                        }
+                        else{
+                            otherObject.hp += this.effect;
+                            if(otherObject.hp > otherObject.maxHp){
+                                otherObject.hp = otherObject.maxHp;
+                            }
+                            this.heldHp = otherObject.hp;
+                        }
+                    }
+                }
+            }
+    }
+};
+
 class BarrierObject{
     className = "BarrierObject";
     iconName = "barrier";
