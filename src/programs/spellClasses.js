@@ -3144,7 +3144,7 @@ class TrueSmiteObject{
                         otherObject.hp = 0;
                     }
                     else{
-                        otherObject.hp -= effect;
+                        otherObject.hp -= this.effect;
                     }
                 }
             }
