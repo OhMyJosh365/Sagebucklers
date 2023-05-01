@@ -2107,7 +2107,7 @@ class BarrierObject{
     school = "Conjure";
     team = "left";
     active = true;
-    maxCharge = 25;
+    maxCharge = 40;
     spawnX = 0;
     spawnY = 0;
     positionX = 0;
@@ -2165,37 +2165,41 @@ class BarrierObject{
         await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
         await ctx.drawImage(await Canvas.loadImage(`./src/Images/${this.iconName}.png`), this.positionX, this.positionY, this.sizeX, this.sizeY);
 
-        if(this.destX != this.positionX){
-            this.positionX += (this.destX > this.positionX) ? this.pixelSpeed : -this.pixelSpeed;
-            this.positionY = (this.slope * this.positionX) + this.offset;
+        if(this.slope != 0 && this.offset != 0){
+            if(this.destX != this.positionX){
+                this.positionX += (this.destX > this.positionX) ? this.pixelSpeed : -this.pixelSpeed;
+                this.positionY = (this.slope * this.positionX) + this.offset;
+            }
+            else{
+                this.positionY += (this.destY > this.positionY) ? this.pixelSpeed : -this.pixelSpeed;
+            }
         }
-        else{
-            this.positionY += (this.destY > this.positionY) ? this.pixelSpeed : -this.pixelSpeed;
+
+        if(this.hp <= 0){
+            this.active = false;
         }
         
     }
 
     async checkCollision(otherObject, thisArrayIndex, otherArrayIndex, objectArray){
-        if(this.slope == 0 && this.offset == 0){
-            if (this.positionX < otherObject.positionX + otherObject.sizeX &&
-                this.positionX + this.sizeX > otherObject.positionX &&
-                this.positionY < otherObject.positionY + otherObject.sizeY &&
-                this.positionY + this.sizeY > otherObject.positionY) {
-                    if(otherObject.hp && otherObject.team != this.team){
-                        if(!(otherObject.positionX == this.spawnX && otherObject.positionY == this.spawnY)){
-                            this.slope = 0;
-                            this.offset = 0;
-                            this.positionX = otherObject.positionX - 20;
-                            this.positionY = otherObject.positionY - 20;
-                            this.sizeX = otherObject.sizeX + 40;
-                            this.sizeY = otherObject.sizeY + 40;
-                        }
-                    }
-                    if(otherObject.slope && this.slope == 0 && otherObject.team == this.team && thisArrayIndex != otherArrayIndex){
-                        otherObject.active = false;
+        if (this.positionX < otherObject.positionX + otherObject.sizeX &&
+            this.positionX + this.sizeX > otherObject.positionX &&
+            this.positionY < otherObject.positionY + otherObject.sizeY &&
+            this.positionY + this.sizeY > otherObject.positionY) {
+                if(otherObject.hp && otherObject.team == this.team){
+                    if(!(otherObject.positionX == this.spawnX && otherObject.positionY == this.spawnY)){
+                        this.slope = 0;
+                        this.offset = 0;
+                        this.positionX = otherObject.positionX - 20;
+                        this.positionY = otherObject.positionY - 20;
+                        this.sizeX = otherObject.sizeX + 40;
+                        this.sizeY = otherObject.sizeY + 40;
                     }
                 }
-        }
+                if(otherObject.slope && this.slope == 0 && otherObject.team == this.team && thisArrayIndex != otherArrayIndex){
+                    otherObject.active = false;
+                }
+            }
     }
 };
 
@@ -2845,7 +2849,7 @@ module.exports = {
     ZapObject, BoltObject, LightningObject, ShockObject, EnergizeObject,
     TidalWaveObject, SplashObject, RiptideObject, RainstormObject, WhirlpoolObject,
     SnowballObject, FrostbiteObject, IcewallObject, FreezeObject, HailObject,
-    HealObject,
+    HealObject, BarrierObject,
     BreezeObject, TailwindObject, TornadoObject, WooshObject,
     MagicMissileObject, ArmageddonObject, TrueSmiteObject, CleanseObject
 };
