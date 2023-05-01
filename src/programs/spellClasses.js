@@ -2119,7 +2119,7 @@ class BarrierObject{
     sizeX = 5;
     sizeY = 5;
     pixelSpeed = 12;
-    hp = 20;
+    hp = 15;
     effect = 2;
     
 
@@ -2181,14 +2181,18 @@ class BarrierObject{
                 this.positionX + this.sizeX > otherObject.positionX &&
                 this.positionY < otherObject.positionY + otherObject.sizeY &&
                 this.positionY + this.sizeY > otherObject.positionY) {
-                    if(otherObject.hp && otherObject.team == this.team &&
-                        !(otherObject.positionX == this.spawnX && otherObject.positionY == this.spawnY)){
-                        
-                        this.active = false;
-                        otherObject.hp += this.effect;
-                        if(otherObject.hp > otherObject.maxHp){
-                            otherObject.hp = otherObject.maxHp;
+                    if(otherObject.hp && otherObject.team != this.team){
+                        if(!(otherObject.positionX == this.spawnX && otherObject.positionY == this.spawnY)){
+                            this.slope = 0;
+                            this.offset = 0;
+                            this.positionX = otherObject.positionX - 20;
+                            this.positionY = otherObject.positionY - 20;
+                            this.sizeX = otherObject.sizeX + 40;
+                            this.sizeY = otherObject.sizeY + 40;
                         }
+                    }
+                    if(otherObject.slope && this.slope == 0 && otherObject.team == this.team && thisArrayIndex != otherArrayIndex){
+                        otherObject.active = false;
                     }
                 }
         }
