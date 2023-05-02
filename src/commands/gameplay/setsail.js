@@ -19,8 +19,8 @@ module.exports = {
                     ["CannonObject", new mateClasses.MateObject()],
                     [null, null],
                     ["CannonObject", new mateClasses.MateObject()],
-                    ["CannonObject", new mateClasses.MateObject()],
                     [null, null],
+                    ["CannonObject", new mateClasses.MateObject()],
                     [null, null],
                     [null, null]
                 ],
@@ -43,8 +43,8 @@ module.exports = {
                     [null, null],
                     ["CannonObject", new mateClasses.MateObject()],
                     [null, null],
-                    [null, null],
                     ["CannonObject", new mateClasses.MateObject()],
+                    [null, null],
                     [null, null]
                 ],
                 "PartInventory": [
