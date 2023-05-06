@@ -1,7 +1,11 @@
 class DiceObject{
     
     spellFaces = [
-        "Bolt",
+        "Burn",
+        "Burn",
+        "Fireball",
+        "Fireball",
+        "Explosion",
         "Explosion"
     ];
 
