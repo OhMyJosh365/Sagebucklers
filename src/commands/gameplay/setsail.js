@@ -35,7 +35,7 @@ module.exports = {
             .addFields([
                 {
                     name: 'Current Captains Aboard',
-                    value: `- ${interaction.user.username}\n- \n- \n- \n- \n-`,
+                    value: `1️⃣   ${interaction.user.username}\n2️⃣\n3️⃣\n4️⃣\n5️⃣\n6️⃣`,
                     inline: true
                 }
             ])
