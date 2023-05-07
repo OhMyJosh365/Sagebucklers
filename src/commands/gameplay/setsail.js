@@ -32,7 +32,13 @@ module.exports = {
         var embed = new EmbedBuilder()
             .setTitle(`${interaction.user.username} is Starting a Party!`)
             .setDescription(`They are starting a public game of Sagebucklers!\nUnfurl the Sails and Hop Aborad!`)
-            .setThumbnail(interaction.user.avatarURL())
+            .addFields([
+                {
+                    name: 'Current Captains Aboard',
+                    value: `- ${interaction.user.username}\n- \n- \n- \n- \n-`,
+                    inline: true
+                }
+            ])
             .setColor(0x101526)
             .setTimestamp(); 
         
@@ -47,7 +53,21 @@ module.exports = {
         ]);
 
         interaction.editReply({embeds: [embed], components: [buttons]});
-        }
+
+        embed.setTitle(`You created a Public Sagebucklers Game!`);
+        embed.setDescription(`Your game lobby was successfully created!\nLet us know when we are all in!`);
+        var buttons = new ActionRowBuilder().addComponents([
+            new ButtonBuilder()
+                .setCustomId('AllSet').setLabel("All Set!")
+                .setStyle(ButtonStyle.Primary).setDisabled(false),
+
+            new ButtonBuilder()
+                .setCustomId('Disbanning').setLabel("Disban the Crew")
+                .setStyle(ButtonStyle.Danger).setDisabled(false)
+        ]);
+
+        interaction.user.send({embeds: [embed], components: [buttons]});
+    }
 }
 // const { SlashCommandBuilder } = require('discord.js')
 // const UserProfile = require('../../schemas/userProfile');
