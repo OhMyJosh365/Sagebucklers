@@ -5,16 +5,32 @@ const mongoose = require("mongoose");
 module.exports = {
     name: 'interactionCreate',
     async execute(interaction, client) {
-
-        client.lastMessage = interaction.id;
         
         if(interaction.user.bot) return;
         
         if(interaction.update) await interaction.deferUpdate();
-        else await interaction.deferReply();
+        else{
+            var mes = await interaction.reply("Hey");
+            console.log(mes)
+            client.lastMessage = [interaction.guildId, interaction.channelId, mes.id];
+        }
+        //1105244584885354586
+        //'1105246205438603365'
+        //'1105246205438603365'
 
-        await interaction.channel.messages.fetch(client.lastMessage)
-            .then(msg => msg.edit(`${client.lastMessage}`));
+        const guild = await client.guilds.cache.get(client.lastMessage[0]);
+        const channel = await guild.channels.fetch(client.lastMessage[1]);
+        const messageManager = channel.messages;
+        const messages = await messageManager.fetch({ limit: 100 });
+        console.log(messages)
+
+        const message = messages.find(m => m.interaction.id === client.lastMessage[2]);
+        if (message) {
+        await message.edit('New message content');
+        }
+        else{
+            console.log(message)
+        }
         return;
 
         var userProfile = await UserProfile.findOne({userId: interaction.user.id})
