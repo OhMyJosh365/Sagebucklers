@@ -15,9 +15,7 @@ module.exports = {
         var userProfile = await UserProfile.findOne({userId: interaction.user.id});
 
         var gameData = {
-            "Player1" : {
-                "userId": interaction.user.id
-            }
+            "Users" : [`${interaction.user.username}`]
         };
 
         let currentGame = await new LiveGames({
@@ -44,11 +42,11 @@ module.exports = {
         
         var buttons = new ActionRowBuilder().addComponents([
             new ButtonBuilder()
-                .setCustomId('Joining').setLabel("Join the Adventure!")
+                .setCustomId('lobbyButtonJ').setLabel("Join the Adventure!") //J for Joining
                 .setStyle(ButtonStyle.Secondary).setDisabled(false),
 
             new ButtonBuilder()
-                .setCustomId('Leaving').setLabel("Leave Party")
+                .setCustomId('lobbyButtonL').setLabel("Leave Party") //L for Leaving
                 .setStyle(ButtonStyle.Danger).setDisabled(false)
         ]);
 
@@ -58,11 +56,11 @@ module.exports = {
         embed.setDescription(`Your game lobby was successfully created!\nLet us know when we are all in!`);
         var buttons = new ActionRowBuilder().addComponents([
             new ButtonBuilder()
-                .setCustomId('AllSet').setLabel("All Set!")
+                .setCustomId('lobbyButtonS').setLabel("All Set!") //S for Set
                 .setStyle(ButtonStyle.Primary).setDisabled(false),
 
             new ButtonBuilder()
-                .setCustomId('Disbanning').setLabel("Disban the Crew")
+                .setCustomId('lobbyButtonD').setLabel("Disban the Crew") //D for Disban
                 .setStyle(ButtonStyle.Danger).setDisabled(false)
         ]);
 
