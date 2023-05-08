@@ -6,9 +6,10 @@ module.exports = {
         name : 'lobbyButton'
     },
     async execute(interaction, client){
-        console.log(interaction.customId)
         
-        var command = interaction.customId.substr(interaction.customId.indexOf(":")+1, interaction.customId.length);
+        var command = interaction.customId.substr(interaction.customId.indexOf(":")+1, 1);
+        var gameID = interaction.customId.substr(interaction.customId.indexOf(".")+1, interaction.customId.length);
+        var currentGame = await LiveGames.findById(gameID);
 
         if(command == "J"){
             console.log("Joining!")
@@ -20,7 +21,9 @@ module.exports = {
             console.log("All Set!")
         }
         else if(command == "D"){
-            console.log("Disban!")
+            console.log("Disban //Edit Imbed instead!");
+            interaction.editReply({content: "Good as Gone Captain!"});
+            currentGame.delete();
         }
 
     }
