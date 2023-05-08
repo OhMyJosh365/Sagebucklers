@@ -6,11 +6,13 @@ module.exports = {
     name: 'interactionCreate',
     async execute(interaction, client) {
         
+        console.log(interaction);
+
         if(interaction.user.bot) return;
         
-        if(interaction.update) await interaction.deferUpdate();
-        else await interaction.deferReply();
-        
+        if(interaction.update) client.lastMessage = interaction.editReply("Loading...");
+        else client.lastMessage = interaction.reply("Loading...");
+
 
         var userProfile = await UserProfile.findOne({userId: interaction.user.id})
         if(!userProfile){

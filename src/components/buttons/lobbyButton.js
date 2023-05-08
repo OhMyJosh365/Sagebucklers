@@ -1,5 +1,6 @@
 const UserProfile = require('../../schemas/userProfile');
 const LiveGames = require('../../schemas/liveGames');
+const { EmbedBuilder } = require("discord.js");
 
 module.exports = {
     data: {
@@ -21,8 +22,13 @@ module.exports = {
             console.log("All Set!")
         }
         else if(command == "D"){
-            console.log("Disban //Edit Imbed instead!");
-            interaction.editReply({content: "Good as Gone Captain!"});
+            var embed = new EmbedBuilder()
+            .setTitle(`Lobby Canceled`)
+            .setDescription(`The Host canceled this party!`)
+            .setColor(0x101526)
+            .setTimestamp(); 
+
+            interaction.editReply({embeds: [embed], components: []});
             currentGame.delete();
         }
 
