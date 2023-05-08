@@ -17,7 +17,7 @@ module.exports = {
         var gameData = {
             "Users" : [`${interaction.user.username}`],
             "LobbySize" : 2,
-            "ActiveMessages" : []
+            "ActiveMessages" : [client.lastMessage]
         };
 
         let currentGame = await new LiveGames({

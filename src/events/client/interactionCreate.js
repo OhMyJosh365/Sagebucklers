@@ -10,28 +10,16 @@ module.exports = {
         
         if(interaction.update) await interaction.deferUpdate();
         else{
-            var mes = await interaction.reply("Hey");
-            console.log(mes)
-            client.lastMessage = [interaction.guildId, interaction.channelId, mes.id];
-        }
-        //1105244584885354586
-        //'1105246205438603365'
-        //'1105246205438603365'
+            var mes = await interaction.reply("Loading...");
+            
+            const guild = await client.guilds.cache.get(interaction.guildId);
+            const channel = await guild.channels.fetch(interaction.channelId);
+            const messageManager = channel.messages;
+            const messages = await messageManager.fetch({ limit: 100 });
+            const message = messages.find(m => m.interaction.id === mes.id);
 
-        const guild = await client.guilds.cache.get(client.lastMessage[0]);
-        const channel = await guild.channels.fetch(client.lastMessage[1]);
-        const messageManager = channel.messages;
-        const messages = await messageManager.fetch({ limit: 100 });
-        console.log(messages)
-
-        const message = messages.find(m => m.interaction.id === client.lastMessage[2]);
-        if (message) {
-        await message.edit('New message content');
+            client.lastMessage = [interaction.guildId, interaction.channelId, message.id];
         }
-        else{
-            console.log(message)
-        }
-        return;
 
         var userProfile = await UserProfile.findOne({userId: interaction.user.id})
         if(!userProfile){

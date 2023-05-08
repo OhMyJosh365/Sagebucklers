@@ -13,7 +13,18 @@ module.exports = {
         var currentGame = await LiveGames.findById(gameID);
 
         if(command == "J"){
-            console.log("Joining!")
+            const guild = await client.guilds.cache.get(currentGame.gameData[0].ActiveMessages[0][0]);
+            const channel = await guild.channels.fetch(currentGame.gameData[0].ActiveMessages[0][1]);
+            const messageManager = channel.messages;
+            const messages = await messageManager.fetch({ limit: 100 });
+
+            const message = messages.find(m => m.id === currentGame.gameData[0].ActiveMessages[0][2]);
+            if (message) {
+            await message.edit({content: "Joining", embeds: [], components: []});
+            }
+            else{
+                console.log(message)
+            }
         }
         else if(command == "L"){
             console.log("Leaving!")
@@ -33,4 +44,8 @@ module.exports = {
         }
 
     }
+}
+
+async function editAllEmbeds(embed){
+
 }
