@@ -5,14 +5,17 @@ const mongoose = require("mongoose");
 module.exports = {
     name: 'interactionCreate',
     async execute(interaction, client) {
-        
-        console.log(interaction);
 
+        client.lastMessage = interaction.id;
+        
         if(interaction.user.bot) return;
         
-        if(interaction.update) client.lastMessage = interaction.editReply("Loading...");
-        else client.lastMessage = interaction.reply("Loading...");
+        if(interaction.update) await interaction.deferUpdate();
+        else await interaction.deferReply();
 
+        await interaction.channel.messages.fetch(client.lastMessage)
+            .then(msg => msg.edit(`${client.lastMessage}`));
+        return;
 
         var userProfile = await UserProfile.findOne({userId: interaction.user.id})
         if(!userProfile){
