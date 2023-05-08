@@ -43,11 +43,11 @@ module.exports = {
         
         var buttons = new ActionRowBuilder().addComponents([
             new ButtonBuilder()
-                .setCustomId('lobbyButtonJ').setLabel("Join the Adventure!") //J for Joining
+                .setCustomId('lobbyButton:J').setLabel("Join the Adventure!") //J for Joining
                 .setStyle(ButtonStyle.Secondary).setDisabled(false),
 
             new ButtonBuilder()
-                .setCustomId('lobbyButtonL').setLabel("Leave Party") //L for Leaving
+                .setCustomId('lobbyButton:L').setLabel("Leave Party") //L for Leaving
                 .setStyle(ButtonStyle.Danger).setDisabled(false)
         ]);
 
@@ -57,11 +57,11 @@ module.exports = {
         embed.setDescription(`Your game lobby was successfully created!\nLet us know when we are all in!`);
         var buttons = new ActionRowBuilder().addComponents([
             new ButtonBuilder()
-                .setCustomId('lobbyButtonS').setLabel("All Set!") //S for Set
+                .setCustomId('lobbyButton:S').setLabel("All Set!") //S for Set
                 .setStyle(ButtonStyle.Primary).setDisabled(false),
 
             new ButtonBuilder()
-                .setCustomId('lobbyButtonD').setLabel("Disban the Crew") //D for Disban
+                .setCustomId('lobbyButton:D').setLabel("Disban the Crew") //D for Disban
                 .setStyle(ButtonStyle.Danger).setDisabled(false)
         ]);
 
