@@ -15,7 +15,8 @@ module.exports = {
         var userProfile = await UserProfile.findOne({userId: interaction.user.id});
 
         var gameData = {
-            "Users" : [`${interaction.user.username}`]
+            "Users" : [`${interaction.user.username}`],
+            "LobbySize" : 2
         };
 
         let currentGame = await new LiveGames({
@@ -33,7 +34,7 @@ module.exports = {
             .addFields([
                 {
                     name: 'Current Captains Aboard',
-                    value: `1️⃣   ${interaction.user.username}\n2️⃣\n3️⃣\n4️⃣\n5️⃣\n6️⃣`,
+                    value: `1️⃣   ${interaction.user.username}\n2️⃣`,
                     inline: true
                 }
             ])
