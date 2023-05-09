@@ -36,6 +36,5 @@ module.exports = {
                 gameData : currentGame.gameData
             });
         require(`../../programs/battlePrep`).prep(interaction, client);
-
     }
 }

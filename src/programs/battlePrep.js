@@ -79,7 +79,7 @@ async function prep(interaction, client, currentGameId, playerIndex){
     const messages = await messageManager.fetch({ limit: 100 });
     const message = messages.find(m => m.id === currentGame.gameData[0][`Player${playerIndex}`].MessageInfo[1]);
     if (message) {
-        await message.edit({content: `Player${playerIndex}`, embeds: [embed], files: [attachment], components: [messageComponents]});
+        await message.edit({ embeds: [embed], files: [attachment], components: [messageComponents]});
     }
 }
 
@@ -89,18 +89,27 @@ async function shipOfButton(interaction, nameOfButton, emojiType){
     var currentGame = await LiveGames.findById(userProfile.activeGameID);
     if(!currentGame) return;
 
+    var playerIndex = -1;
+    for(var i = 0; i < currentGame.gameData[0].NumPlayers; i++){
+        if(currentGame.gameData[0][`Player${i+1}`].username == userProfile.username){
+            playerIndex = i+1;
+            break;
+        }
+    }
+    if(playerIndex == -1) return;
+
     var emojiList = ["🟫", "🟫", "🟫", "🟫", "🟫", "🟫", "🟫"];
     if(emojiType == "PartEmojis"){
         for(var i = 0; i < 7; i++){
-            if(currentGame.gameData[0].Player1.Ship[i][0] != null){ //Needs to be for all players later
-                emojiList[i] = new partClasses[`${currentGame.gameData[0].Player1.Ship[i][0]}`]().emoji;
+            if(currentGame.gameData[0][`Player${playerIndex}`].Ship[i][0] != null){ //Needs to be for all players later
+                emojiList[i] = new partClasses[`${currentGame.gameData[0][`Player${playerIndex}`].Ship[i][0]}`]().emoji;
             }
         }
     }
     else if(emojiType == "MateEmojis"){
         var mateList = ["🦉", "🦚", "🦩", "🦜", "🦅"], emojiIndex = 0;
         for(var i = 0; i < 7; i++){
-            if(currentGame.gameData[0].Player1.Ship[i][1] != null){ //Needs to be for all players later
+            if(currentGame.gameData[0][`Player${playerIndex}`].Ship[i][1] != null){ //Needs to be for all players later
                 emojiList[i] = mateList[emojiIndex++]
             }
         }
@@ -113,7 +122,7 @@ async function shipOfButton(interaction, nameOfButton, emojiType){
                 .setCustomId('null4').setLabel("🌊")
                 .setStyle(ButtonStyle.Primary).setDisabled(true),
             new ButtonBuilder()
-                .setCustomId(`${nameOfButton}0`).setLabel(emojiList[0])
+                .setCustomId(`${nameOfButton}:0`).setLabel(emojiList[0])
                 .setStyle(ButtonStyle.Secondary).setDisabled(false),
             new ButtonBuilder()
                 .setCustomId('null5').setLabel("🌊")
@@ -123,39 +132,39 @@ async function shipOfButton(interaction, nameOfButton, emojiType){
     const row3 = new ActionRowBuilder().addComponents(
         [
             new ButtonBuilder()
-                .setCustomId(`${nameOfButton}1`).setLabel(emojiList[1])
+                .setCustomId(`${nameOfButton}:1`).setLabel(emojiList[1])
                 .setStyle(ButtonStyle.Secondary).setDisabled(false),
             new ButtonBuilder()
                 .setCustomId('null6').setLabel("🟤")
                 .setStyle(ButtonStyle.Secondary).setDisabled(true),
                 new ButtonBuilder()
-                .setCustomId(`${nameOfButton}2`).setLabel(emojiList[2])
+                .setCustomId(`${nameOfButton}:2`).setLabel(emojiList[2])
                 .setStyle(ButtonStyle.Secondary).setDisabled(false)
         ]
     );
     const row4 = new ActionRowBuilder().addComponents(
         [
             new ButtonBuilder()
-                .setCustomId(`${nameOfButton}3`).setLabel(emojiList[3])
+                .setCustomId(`${nameOfButton}:3`).setLabel(emojiList[3])
                 .setStyle(ButtonStyle.Secondary).setDisabled(false),
             new ButtonBuilder()
                 .setCustomId('null7').setLabel("🟫")
                 .setStyle(ButtonStyle.Secondary).setDisabled(true),
                 new ButtonBuilder()
-                .setCustomId(`${nameOfButton}4`).setLabel(emojiList[4])
+                .setCustomId(`${nameOfButton}:4`).setLabel(emojiList[4])
                 .setStyle(ButtonStyle.Secondary).setDisabled(false)
         ]
     );
     const row5 = new ActionRowBuilder().addComponents(
         [
             new ButtonBuilder()
-                .setCustomId(`${nameOfButton}5`).setLabel(emojiList[5])
+                .setCustomId(`${nameOfButton}:5`).setLabel(emojiList[5])
                 .setStyle(ButtonStyle.Secondary).setDisabled(false),
             new ButtonBuilder()
                 .setCustomId('null8').setLabel("🟫")
                 .setStyle(ButtonStyle.Secondary).setDisabled(true),
                 new ButtonBuilder()
-                .setCustomId(`${nameOfButton}6`).setLabel(emojiList[6])
+                .setCustomId(`${nameOfButton}:6`).setLabel(emojiList[6])
                 .setStyle(ButtonStyle.Secondary).setDisabled(false)
         ]
     );
