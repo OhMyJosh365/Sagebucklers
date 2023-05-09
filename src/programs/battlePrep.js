@@ -218,7 +218,12 @@ async function editAllEmbeds(gameData, interaction, client, currentGame){
 
             const user = await client.users.fetch(messageBoard[i][0]);
             const dmChannel = await user.createDM();
-            const message = await dmChannel.send({embeds: [embed], components: [usingButtons]});
+            const messageManager = dmChannel.messages;
+            const messages = await messageManager.fetch({ limit: 100 });
+            const message = messages.find(m => m.id === messageBoard[i][1]);
+            if (message) {
+                await message.edit({embeds: [embed], components: [usingButtons]});
+            }
         }
         else{
 
