@@ -22,10 +22,10 @@ async function prep(interaction, client, currentGameId, playerIndex){
     var backgroundImage = await Canvas.loadImage(`./src/Images/cloud.png`);
     ctx.drawImage(backgroundImage, sizeH*(1/2), 0, sizeH, sizeW);
 
-    for(var i = 0; i < currentGame.gameData[0].Player1.Ship.length; i++){
-        if(currentGame.gameData[0].Player1.Ship[i][0] != null){
+    for(var i = 0; i < currentGame.gameData[0][`Player${playerIndex}`].Ship.length; i++){
+        if(currentGame.gameData[0][`Player${playerIndex}`].Ship[i][0] != null){
             
-            var part = new partClasses[`${currentGame.gameData[0].Player1.Ship[i][0]}`]();
+            var part = new partClasses[`${currentGame.gameData[0][`Player${playerIndex}`].Ship[i][0]}`]();
             part.team = sides[i];
             part.positionX = partClasses[`leftShipPartPlacements`][i][0];
             part.positionY = partClasses[`leftShipPartPlacements`][i][1];
@@ -37,7 +37,8 @@ async function prep(interaction, client, currentGameId, playerIndex){
     const attachment = new AttachmentBuilder(canvas.toBuffer(), "Can.png");
 
     var embed = new EmbedBuilder()
-        .setTitle(`Prepare for the Plunder!`)
+        .setTitle(`Prepare to set Sail!`)
+        .setDescription(`You are about to set sail to face <Enemy>\nNeed any more prepared before sailing Captain?`)
         .setImage('attachment://Can.png')
         .setColor(0x101526)
         .setTimestamp();
@@ -76,12 +77,10 @@ async function prep(interaction, client, currentGameId, playerIndex){
     const dmChannel = await user.createDM();
     const messageManager = dmChannel.messages;
     const messages = await messageManager.fetch({ limit: 100 });
-    const message = messages.find(m => m.id === currentGame.gameData[0][`Player${playerIndex}`].MessageInfo[2]);
+    const message = messages.find(m => m.id === currentGame.gameData[0][`Player${playerIndex}`].MessageInfo[1]);
     if (message) {
-        await message.edit({embeds: [embed], components: [usingButtons]});
+        await message.edit({content: `Player${playerIndex}`, embeds: [embed], files: [attachment], components: [messageComponents]});
     }
-
-    interaction.editReply({embeds: [embed], files: [attachment], components: [messageComponents]});
 }
 
 async function shipOfButton(interaction, nameOfButton, emojiType){
