@@ -17,6 +17,7 @@ module.exports = {
         var gameData = {
             "Users" : [`${interaction.user.username}`],
             "LobbySize" : 2,
+            "NumPlayers" : 1,
             "ActiveMessages" : [client.lastMessage]
         };
 
@@ -26,47 +27,15 @@ module.exports = {
         });
 
         userProfile.activeGameID = await currentGame.id;
+        interaction.editReply({content: "Loading..."});
+
+        const dmChannel = await interaction.user.createDM();
+        const message = await dmChannel.send({content: "Loading..."});
+        gameData.ActiveMessages.push([interaction.user.id, message.id, "Host"])
+
+        await require(`../../programs/battlePrep`).editAllEmbeds(gameData, interaction, client, currentGame);
         await currentGame.save();
         await userProfile.save();
-
-        var embed = new EmbedBuilder()
-            .setTitle(`${interaction.user.username} is Starting a Party!`)
-            .setDescription(`They are starting a public game of Sagebucklers!\nUnfurl the Sails and Hop Aborad!`)
-            .addFields([
-                {
-                    name: 'Current Captains Aboard',
-                    value: `1️⃣   ${interaction.user.username}\n2️⃣`,
-                    inline: true
-                }
-            ])
-            .setColor(0x101526)
-            .setTimestamp(); 
-        
-        var buttons = new ActionRowBuilder().addComponents([
-            new ButtonBuilder()
-                .setCustomId(`lobbyButton:J.${currentGame.id}`).setLabel("Join the Adventure!") //J for Joining
-                .setStyle(ButtonStyle.Secondary).setDisabled(false),
-
-            new ButtonBuilder()
-                .setCustomId(`lobbyButton:L.${currentGame.id}`).setLabel("Leave Party") //L for Leaving
-                .setStyle(ButtonStyle.Danger).setDisabled(false)
-        ]);
-
-        interaction.editReply({embeds: [embed], components: [buttons]});
-
-        embed.setTitle(`You created a Public Sagebucklers Game!`);
-        embed.setDescription(`Your game lobby was successfully created!\nLet us know when we are all in!`);
-        var buttons = new ActionRowBuilder().addComponents([
-            new ButtonBuilder()
-                .setCustomId(`lobbyButton:S.${currentGame.id}`).setLabel("All Set!") //S for Set
-                .setStyle(ButtonStyle.Primary).setDisabled(false),
-
-            new ButtonBuilder()
-                .setCustomId(`lobbyButton:D.${currentGame.id}`).setLabel("Disban the Crew") //D for Disban
-                .setStyle(ButtonStyle.Danger).setDisabled(false)
-        ]);
-
-        interaction.user.send({embeds: [embed], components: [buttons]});
     }
 }
 // const { SlashCommandBuilder } = require('discord.js')

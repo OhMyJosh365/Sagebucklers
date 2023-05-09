@@ -157,4 +157,82 @@ async function shipOfButton(interaction, nameOfButton, emojiType){
     return [row2, row3, row4, row5];
 }
 
-module.exports = {prep, shipOfButton};
+async function editAllEmbeds(gameData, interaction, client, currentGame){
+    var messageBoard = gameData.ActiveMessages;
+
+    var numEmojis = ['1️⃣', '2️⃣', '3️⃣', '4️⃣', '5️⃣', '6️⃣', '7️⃣', '8️⃣'];
+    var emojiIndex = 0;
+    var hostIndex = -1;
+    var feildVals = ``;
+
+    for(var i = 0; i < messageBoard.length; i++){
+        if(messageBoard[i][2] == "Host"){
+            hostIndex = i;
+        }
+        if(messageBoard[i][2] == "Host" || messageBoard[i][2] == "Pending" || messageBoard[i][2] == "Guest"){
+            var user = await client.users.fetch(messageBoard[i][0]);
+            feildVals += `${numEmojis[emojiIndex++]}    ${user.username}\n`
+        }
+    }
+    for(; emojiIndex < gameData.LobbySize; emojiIndex++){
+        feildVals += `${numEmojis[emojiIndex]}\n`
+    }
+
+    var user = await client.users.fetch(messageBoard[hostIndex][0])
+    var embed = new EmbedBuilder()
+        .setTitle(`${user.username} is Starting a Party!`)
+        .setDescription(`They are starting a public game of Sagebucklers!\nUnfurl the Sails and Hop Aborad!`)
+        .addFields([
+            {
+                name: 'Current Captains Aboard',
+                value: feildVals,
+                inline: true
+            }
+        ])
+        .setColor(0x101526)
+        .setTimestamp(); 
+
+    var joinButtons = new ActionRowBuilder().addComponents([
+        new ButtonBuilder()
+            .setCustomId(`lobbyButton:J.${currentGame.id}`).setLabel("Join the Adventure!")
+            .setStyle(ButtonStyle.Primary).setDisabled(false),
+    ]);
+    var guestButtons = new ActionRowBuilder().addComponents([
+        new ButtonBuilder()
+            .setCustomId(`lobbyButton:L.${currentGame.id}`).setLabel("Leave the Lobby")
+            .setStyle(ButtonStyle.Danger).setDisabled(false),
+    ]);
+    var hostButtons = new ActionRowBuilder().addComponents([
+        new ButtonBuilder()
+            .setCustomId(`lobbyButton:S.${currentGame.id}`).setLabel("All Set!")
+            .setStyle(ButtonStyle.Primary).setDisabled(false),
+        new ButtonBuilder()
+            .setCustomId(`lobbyButton:D.${currentGame.id}`).setLabel("Disban the Crew")
+            .setStyle(ButtonStyle.Danger).setDisabled(false)
+    ]);
+
+
+    for(var i = 0; i < messageBoard.length; i++){
+        if(messageBoard[i][2] == "Host" || messageBoard[i][2] == "Pending" || messageBoard[i][2] == "Guest"){
+            var usingButtons = (messageBoard[i][2] != "Host") ? ((messageBoard[i][2] == "Guest") ? guestButtons : joinButtons) : hostButtons;
+
+            const user = await client.users.fetch(messageBoard[i][0]);
+            const dmChannel = await user.createDM();
+            const message = await dmChannel.send({embeds: [embed], components: [usingButtons]});
+        }
+        else{
+
+            const guild = await client.guilds.cache.get(messageBoard[i][0]);
+            const channel = await guild.channels.fetch(messageBoard[i][1]);
+            const messageManager = channel.messages;
+            const messages = await messageManager.fetch({ limit: 100 });
+    
+            const message = messages.find(m => m.id === messageBoard[i][2]);
+            if (message) {
+            await message.edit({embeds: [embed], components: [joinButtons]});
+            }
+        }
+    }
+}
+
+module.exports = {prep, shipOfButton, editAllEmbeds};
