@@ -8,10 +8,9 @@ var partClasses = require(`../programs/partClasses`);
 const LiveGames = require('../schemas/liveGames');
 const UserProfile = require('../schemas/userProfile');
 
-async function prep(interaction, client){
+async function prep(interaction, client, currentGameId, playerIndex){
 
-    var userProfile = await UserProfile.findOne({userId: interaction.user.id});
-    var currentGame = await LiveGames.findById(userProfile.activeGameID);
+    var currentGame = await LiveGames.findById(currentGameId);
 
     var sizeH = 250, sizeW = 250;
     canvas = Canvas.createCanvas(sizeH, sizeW)
@@ -38,11 +37,10 @@ async function prep(interaction, client){
     const attachment = new AttachmentBuilder(canvas.toBuffer(), "Can.png");
 
     var embed = new EmbedBuilder()
-        .setTitle(`It's works!`)
-        .setThumbnail(interaction.user.avatarURL())
-        .setImage('attachment://Can.png') //adding a image
+        .setTitle(`Prepare for the Plunder!`)
+        .setImage('attachment://Can.png')
         .setColor(0x101526)
-        .setTimestamp(); 
+        .setTimestamp();
     
     const messageComponents = new ActionRowBuilder().addComponents(
         new StringSelectMenuBuilder()
@@ -73,6 +71,15 @@ async function prep(interaction, client){
             })
         )
     );
+
+    const user = await client.users.fetch(currentGame.gameData[0][`Player${playerIndex}`].MessageInfo[0]);
+    const dmChannel = await user.createDM();
+    const messageManager = dmChannel.messages;
+    const messages = await messageManager.fetch({ limit: 100 });
+    const message = messages.find(m => m.id === currentGame.gameData[0][`Player${playerIndex}`].MessageInfo[2]);
+    if (message) {
+        await message.edit({embeds: [embed], components: [usingButtons]});
+    }
 
     interaction.editReply({embeds: [embed], files: [attachment], components: [messageComponents]});
 }

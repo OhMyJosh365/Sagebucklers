@@ -65,7 +65,7 @@ module.exports = {
 
         }
         else if(command == "S"){
-            console.log("All Set!")
+            return require(`../../programs/townFunctions`).beginGame(interaction, client, gameID);
         }
         else if(command == "D"){
             var messageBoard = currentGame.gameData[0].ActiveMessages;
@@ -73,7 +73,7 @@ module.exports = {
             .setTitle(`Lobby Canceled`)
             .setDescription(`The Host canceled this party!`)
             .setColor(0x101526)
-            .setTimestamp(); 
+            .setTimestamp();
 
             for(var i = 0; i < messageBoard.length; i++){
                 if(messageBoard[i][2] == "Host" || messageBoard[i][2] == "Pending" || messageBoard[i][2] == "Guest"){
