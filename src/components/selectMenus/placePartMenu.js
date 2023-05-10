@@ -13,13 +13,22 @@ module.exports = {
         var userProfile = await UserProfile.findOne({userId: interaction.user.id});
         var currentGame = await LiveGames.findById(userProfile.activeGameID);
 
+        var playerIndex = -1;
+        for(var i = 0; i < currentGame.gameData[0].NumPlayers; i++){
+            if(currentGame.gameData[0][`Player${i+1}`].username == userProfile.username){
+                playerIndex = i+1;
+                break;
+            }
+        }
+        if(playerIndex == -1) return;
+
         if(interaction.values[0] == "returnToPrep"){
             require("../../programs/battlePrep").prep(interaction, client);
         }
         else{
             var inventory = interaction.values[0].substring(0, interaction.values[0].length-7);
-            currentGame.gameData[0].Player1["Selections"] = await [];
-            currentGame.gameData[0].Player1["Selections"][0] = interaction.values[0].substring(0, interaction.values[0].length-1);
+            currentGame.gameData[0][`Player${playerIndex}`]["Selections"] = await [];
+            currentGame.gameData[0][`Player${playerIndex}`]["Selections"][0] = interaction.values[0].substring(0, interaction.values[0].length-1);
 
             var embed = new EmbedBuilder()
                 .setTitle(`Where do you wanna place your ${inventory}?`)

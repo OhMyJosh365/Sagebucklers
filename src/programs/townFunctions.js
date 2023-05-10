@@ -55,13 +55,25 @@ async function beginGame(interaction, client, gameID){
             }
         }
 
+        var matches = {};
+        var numGames = 0;
+        for(var i = 0; i < gameData.NumPlayers; i+=2){
+            matches[`Game${i}`] = {
+                "left" : `Player${i+1}`,
+                "right" : `Player${i+2}`
+            };
+            numGames++;
+        }
+        matches["numGames"] = numGames;
+
         await LiveGames.findByIdAndUpdate(currentGame.id,
             {
-                gameData : gameData
+                gameData : gameData,
+                activeMatches : matches
             });
 
         for(var i = 0; i < gameData.NumPlayers; i++){
-            await require(`../programs/battlePrep`).prep(interaction, client, currentGame.id, i+1);
+            require(`../programs/battlePrep`).prep(interaction, client, currentGame.id, i+1);
         }
 }
 

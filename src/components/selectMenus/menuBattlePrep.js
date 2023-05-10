@@ -13,6 +13,15 @@ module.exports = {
         var userProfile = await UserProfile.findOne({userId: interaction.user.id});
         var currentGame = await LiveGames.findById(userProfile.activeGameID);
 
+        var playerIndex = -1;
+        for(var i = 0; i < currentGame.gameData[0].NumPlayers; i++){
+            if(currentGame.gameData[0][`Player${i+1}`].username == userProfile.username){
+                playerIndex = i+1;
+                break;
+            }
+        }
+        if(playerIndex == -1) return;
+
         if(interaction.values[0] == "readyUp"){
             await interaction.editReply({components: [], files: []});
             require(`../../programs/duel`).startDuel(interaction, client, userProfile.activeGameID);
@@ -26,8 +35,8 @@ module.exports = {
                 .setTimestamp();
 
             var options = [], i = 0;
-            for(var j = 0; j < currentGame.gameData[0].Player1.PartInventory.length; j++){
-                var objectName = currentGame.gameData[0].Player1.PartInventory[j];
+            for(var j = 0; j < currentGame.gameData[0][`Player${playerIndex}`].PartInventory.length; j++){
+                var objectName = currentGame.gameData[0][`Player${playerIndex}`].PartInventory[j];
                 var partName = objectName.substring(0, objectName.length-6);
 
                 options[i++] = new StringSelectMenuOptionBuilder({
@@ -76,8 +85,8 @@ module.exports = {
 
             
             var options = [], i = 0;
-            for(var j = 0; j < currentGame.gameData[0].Player1.MateInventory.length; j++){
-                var mateName = currentGame.gameData[0].Player1.MateInventory[j].name;
+            for(var j = 0; j < currentGame.gameData[0][`Player${playerIndex}`].MateInventory.length; j++){
+                var mateName = currentGame.gameData[0][`Player${playerIndex}`].MateInventory[j].name;
 
                 options[i] = new StringSelectMenuOptionBuilder({
                     label: `${mateName}`,

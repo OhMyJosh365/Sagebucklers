@@ -12,6 +12,19 @@ async function prep(interaction, client, currentGameId, playerIndex){
 
     var currentGame = await LiveGames.findById(currentGameId);
 
+    var rival;
+    for(gameInd = 0; gameInd < currentGame.activeMatches[0].numGames; gameInd++){
+        if(currentGame.activeMatches[0][`Game${gameInd}`].left == `Player${playerIndex}`){
+            rival = await client.users.fetch(currentGame.gameData[0][(currentGame.activeMatches[0][`Game${gameInd}`].right)].MessageInfo[0]);
+            break;
+        }
+        if(currentGame.activeMatches[0][`Game${gameInd}`].right == `Player${playerIndex}`){
+            rival = await client.users.fetch(currentGame.gameData[0][(currentGame.activeMatches[0][`Game${gameInd}`].left)].MessageInfo[0]);
+            break;
+        }
+    }
+
+    //Should swap sides based on current side
     var sizeH = 250, sizeW = 250;
     canvas = Canvas.createCanvas(sizeH, sizeW)
     ctx = canvas.getContext('2d');
@@ -38,7 +51,8 @@ async function prep(interaction, client, currentGameId, playerIndex){
 
     var embed = new EmbedBuilder()
         .setTitle(`Prepare to set Sail!`)
-        .setDescription(`You are about to set sail to face <Enemy>\nNeed any more prepared before sailing Captain?`)
+        .setDescription(`You are about to set sail to face ${rival.username}\nNeed any more prepared before sailing Captain?`)
+        .setThumbnail(rival.avatarURL())
         .setImage('attachment://Can.png')
         .setColor(0x101526)
         .setTimestamp();
@@ -46,7 +60,7 @@ async function prep(interaction, client, currentGameId, playerIndex){
     const messageComponents = new ActionRowBuilder().addComponents(
         new StringSelectMenuBuilder()
             .setCustomId('menuBattlePrep')
-            .setPlaceholder('Prepare to face <OppenentName>!')
+            .setPlaceholder(`Prepare to face ${rival.username}!`)
             .setMinValues(1)
             .setMaxValues(1)
             .setOptions(
@@ -98,10 +112,26 @@ async function shipOfButton(interaction, nameOfButton, emojiType){
     }
     if(playerIndex == -1) return;
 
+    var buttonIndexes = [];
+    var leftButtons = [0, 1, 2, 3, 4, 5, 6];
+    var rightButtons = [0, 2, 1, 4, 3, 6, 5];
+
+    for(gameInd = 0; gameInd < currentGame.activeMatches[0].numGames; gameInd++){
+
+        if(currentGame.activeMatches[0][`Game${gameInd}`].left == `Player${playerIndex}`){
+            buttonIndexes = leftButtons;
+            break;
+        }
+        if(currentGame.activeMatches[0][`Game${gameInd}`].right == `Player${playerIndex}`){
+            buttonIndexes = rightButtons;
+            break;
+        }
+    }
+
     var emojiList = ["🟫", "🟫", "🟫", "🟫", "🟫", "🟫", "🟫"];
     if(emojiType == "PartEmojis"){
         for(var i = 0; i < 7; i++){
-            if(currentGame.gameData[0][`Player${playerIndex}`].Ship[i][0] != null){ //Needs to be for all players later
+            if(currentGame.gameData[0][`Player${playerIndex}`].Ship[i][0] != null){
                 emojiList[i] = new partClasses[`${currentGame.gameData[0][`Player${playerIndex}`].Ship[i][0]}`]().emoji;
             }
         }
@@ -109,7 +139,7 @@ async function shipOfButton(interaction, nameOfButton, emojiType){
     else if(emojiType == "MateEmojis"){
         var mateList = ["🦉", "🦚", "🦩", "🦜", "🦅"], emojiIndex = 0;
         for(var i = 0; i < 7; i++){
-            if(currentGame.gameData[0][`Player${playerIndex}`].Ship[i][1] != null){ //Needs to be for all players later
+            if(currentGame.gameData[0][`Player${playerIndex}`].Ship[i][1] != null){
                 emojiList[i] = mateList[emojiIndex++]
             }
         }
@@ -122,7 +152,7 @@ async function shipOfButton(interaction, nameOfButton, emojiType){
                 .setCustomId('null4').setLabel("🌊")
                 .setStyle(ButtonStyle.Primary).setDisabled(true),
             new ButtonBuilder()
-                .setCustomId(`${nameOfButton}:0`).setLabel(emojiList[0])
+                .setCustomId(`${nameOfButton}:${buttonIndexes[0]}`).setLabel(emojiList[0])
                 .setStyle(ButtonStyle.Secondary).setDisabled(false),
             new ButtonBuilder()
                 .setCustomId('null5').setLabel("🌊")
@@ -132,39 +162,39 @@ async function shipOfButton(interaction, nameOfButton, emojiType){
     const row3 = new ActionRowBuilder().addComponents(
         [
             new ButtonBuilder()
-                .setCustomId(`${nameOfButton}:1`).setLabel(emojiList[1])
+                .setCustomId(`${nameOfButton}:${buttonIndexes[1]}`).setLabel(emojiList[1])
                 .setStyle(ButtonStyle.Secondary).setDisabled(false),
             new ButtonBuilder()
                 .setCustomId('null6').setLabel("🟤")
                 .setStyle(ButtonStyle.Secondary).setDisabled(true),
                 new ButtonBuilder()
-                .setCustomId(`${nameOfButton}:2`).setLabel(emojiList[2])
+                .setCustomId(`${nameOfButton}:${buttonIndexes[2]}`).setLabel(emojiList[2])
                 .setStyle(ButtonStyle.Secondary).setDisabled(false)
         ]
     );
     const row4 = new ActionRowBuilder().addComponents(
         [
             new ButtonBuilder()
-                .setCustomId(`${nameOfButton}:3`).setLabel(emojiList[3])
+                .setCustomId(`${nameOfButton}:${buttonIndexes[3]}`).setLabel(emojiList[3])
                 .setStyle(ButtonStyle.Secondary).setDisabled(false),
             new ButtonBuilder()
                 .setCustomId('null7').setLabel("🟫")
                 .setStyle(ButtonStyle.Secondary).setDisabled(true),
                 new ButtonBuilder()
-                .setCustomId(`${nameOfButton}:4`).setLabel(emojiList[4])
+                .setCustomId(`${nameOfButton}:${buttonIndexes[4]}`).setLabel(emojiList[4])
                 .setStyle(ButtonStyle.Secondary).setDisabled(false)
         ]
     );
     const row5 = new ActionRowBuilder().addComponents(
         [
             new ButtonBuilder()
-                .setCustomId(`${nameOfButton}:5`).setLabel(emojiList[5])
+                .setCustomId(`${nameOfButton}:${buttonIndexes[5]}`).setLabel(emojiList[5])
                 .setStyle(ButtonStyle.Secondary).setDisabled(false),
             new ButtonBuilder()
                 .setCustomId('null8').setLabel("🟫")
                 .setStyle(ButtonStyle.Secondary).setDisabled(true),
                 new ButtonBuilder()
-                .setCustomId(`${nameOfButton}:6`).setLabel(emojiList[6])
+                .setCustomId(`${nameOfButton}:${buttonIndexes[6]}`).setLabel(emojiList[6])
                 .setStyle(ButtonStyle.Secondary).setDisabled(false)
         ]
     );
